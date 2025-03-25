@@ -75,7 +75,7 @@ class LinkedListPrime:
         # If only one node, use removefirst logic
         if self._head is self._tail:
             return self.removefirst()
-        
+
         # Find second-to-last node
         currentnode = self._head
         while currentnode.link is not self._tail:

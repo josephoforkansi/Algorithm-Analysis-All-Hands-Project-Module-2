@@ -45,7 +45,7 @@ class ListQueueDisplay:
     def _cleanup(self) -> None:
         """Remove dequeued items from the list to free memory."""
         if self._head > 0:
-            self._L = self._L[self._head:]
+            self._L = self._L[self._head :]
             self._head = 0
 
     @timed("length")
@@ -74,23 +74,23 @@ class ListQueueDisplay:
     def __str__(self) -> str:
         """Return a string representation of the queue contents."""
         # Return string representation of items from head to end
-        return str(self._L[self._head:])
+        return str(self._L[self._head :])
 
     @timed("add")
     def __add__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
         """Concatenate two queues and return a new combined queue."""
         result = ListQueueDisplay()
         # Add items from first queue
-        result._L.extend(self._L[self._head:])
+        result._L.extend(self._L[self._head :])
         # Add items from second queue
-        result._L.extend(other._L[other._head:])
+        result._L.extend(other._L[other._head :])
         return result
 
     @timed("iadd")
     def __iadd__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
         """Concatenate another queue to this queue in-place."""
         # Add items from other queue using extend for efficiency
-        self._L.extend(other._L[other._head:])
+        self._L.extend(other._L[other._head :])
         # Clean up the other queue's memory
         other._L = []
         other._head = 0
