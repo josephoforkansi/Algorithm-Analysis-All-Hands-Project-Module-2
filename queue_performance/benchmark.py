@@ -1,7 +1,7 @@
 import time
-from sll_queue import SLLQueue
-from dll_queue import DLLQueue
-from array_queue import ArrayQueue
+from queue_performance.sll_queue import SLLQueue
+from queue_performance.dll_queue import DLLQueue
+from queue_performance.array_queue import ArrayQueue
 
 def benchmark(queue_type, operations=1000):
     queue = queue_type()
