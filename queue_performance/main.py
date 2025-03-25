@@ -1,7 +1,7 @@
-from queue_performance.benchmark import benchmark
-from queue_performance.sll_queue import SLLQueue
-from queue_performance.dll_queue import DLLQueue
-from queue_performance.array_queue import ArrayQueue
+from benchmark import benchmark
+from sll_queue import SLLQueue
+from dll_queue import DLLQueue
+from array_queue import ArrayQueue
 import unittest
 import test_cases
 

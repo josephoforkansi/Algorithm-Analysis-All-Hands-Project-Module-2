@@ -1,5 +1,5 @@
 import json
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # type: ignore
 
 def load_results(filename="benchmark_results.json"):
     """Load benchmark results from a JSON file."""
