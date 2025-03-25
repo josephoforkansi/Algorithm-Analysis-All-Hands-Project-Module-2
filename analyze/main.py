@@ -109,7 +109,6 @@ def run_doubling_experiment(
     size = initial_size
     
     while size <= max_size:
-        console.print(f"Testing size: {size}")
         for operation in operations:
             if operation not in results:
                 results[operation] = []
@@ -136,7 +135,6 @@ def run_doubling_experiment(
             
             avg_time = total_time / 10
             results[operation].append((size, avg_time))
-            console.print(f"  {operation}: {avg_time:.6f} seconds")
             
         size *= 2
         
@@ -217,19 +215,16 @@ def create_table(result: TimingResult, size: int) -> Table:
     table.add_column("Time (ms)", justify="right", style="green")
     table.add_column("Elements", justify="right", style="yellow")
     table.add_column("Time/Element (ms)", justify="right", style="magenta")
-    table.add_column("Ops/second", justify="right", style="blue")
 
     for op_name, (time, elements) in sorted(result.operations.items()):
         if time > 0 and elements > 0:
             time_ms = time * 1000
             time_per_element_ms = (time / elements) * 1000
-            ops_per_second = elements / time
             table.add_row(
                 op_name,
                 f"{time_ms:.6f}",
                 f"{elements:,}",
                 f"{time_per_element_ms:.6f}",
-                f"{ops_per_second:,.2f}",
             )
 
     return table
@@ -348,14 +343,6 @@ def doubling(
         console.print("[red]Error: Invalid size parameters[/red]")
         return
 
-    console.print(
-        Panel(
-            "[bold]Queue Implementation Doubling Experiment[/bold]",
-            title="Doubling Analysis",
-            border_style="blue",
-        )
-    )
-
     operations = ["enqueue", "dequeue", "peek", "concat", "iconcat"]
     output_path = Path(output_dir)
     approaches = get_selected_approaches(dll, sll, array)
@@ -364,7 +351,6 @@ def doubling(
         queue_class = QUEUE_IMPLEMENTATIONS[approach]
         impl_name = approach.name.upper()
         
-        console.print(f"\nRunning doubling experiment for {impl_name} Queue...")
         try:
             results = run_doubling_experiment(queue_class, initial_size, max_size, operations)
             
