@@ -3,11 +3,13 @@
 import pytest
 from main.SLL import LinkedListPrime, LinkedQueue
 
+
 # LinkedListPrime Tests
 def test_list_init():
     """Test list initialization."""
     lst = LinkedListPrime()
     assert len(lst) == 0
+
 
 def test_addfirst():
     """Test adding items to the front of the list."""
@@ -19,6 +21,7 @@ def test_addfirst():
     assert lst.removefirst() == 2
     assert lst.removefirst() == 1
 
+
 def test_addlast():
     """Test adding items to the end of the list."""
     lst = LinkedListPrime()
@@ -29,6 +32,7 @@ def test_addlast():
     assert lst.removelast() == 2
     assert lst.removelast() == 1
 
+
 def test_removefirst():
     """Test removing items from the front of the list."""
     lst = LinkedListPrime()
@@ -37,6 +41,7 @@ def test_removefirst():
     assert lst.removefirst() == 2
     assert lst.removefirst() == 1
     assert len(lst) == 0
+
 
 def test_removelast():
     """Test removing items from the end of the list."""
@@ -47,6 +52,7 @@ def test_removelast():
     assert lst.removelast() == 1
     assert len(lst) == 0
 
+
 def test_list_concatenation():
     """Test list concatenation operations."""
     lst1 = LinkedListPrime()
@@ -55,7 +61,7 @@ def test_list_concatenation():
     lst1.addlast(2)
     lst2.addlast(3)
     lst2.addlast(4)
-    
+
     # Test __add__
     result = lst1 + lst2
     assert len(result) == 4
@@ -63,7 +69,7 @@ def test_list_concatenation():
     assert result.removefirst() == 2
     assert result.removefirst() == 3
     assert result.removefirst() == 4
-    
+
     # Test __iadd__
     lst1 += lst2
     assert len(lst1) == 4
@@ -72,6 +78,7 @@ def test_list_concatenation():
     assert lst1.removefirst() == 3
     assert lst1.removefirst() == 4
 
+
 # LinkedQueue Tests
 def test_queue_init():
     """Test queue initialization."""
@@ -79,12 +86,14 @@ def test_queue_init():
     assert len(queue) == 0
     assert queue.isempty() == True
 
+
 def test_queue_enqueue():
     """Test adding items to the queue."""
     queue = LinkedQueue()
     queue.enqueue(1)
     assert len(queue) == 1
     assert queue.isempty() == False
+
 
 def test_queue_dequeue():
     """Test removing items from the queue."""
@@ -96,6 +105,7 @@ def test_queue_dequeue():
     assert queue.dequeue() == 2
     assert queue.isempty() == True
 
+
 def test_queue_peek():
     """Test peeking at the first item without removing it."""
     queue = LinkedQueue()
@@ -103,6 +113,7 @@ def test_queue_peek():
     assert queue.peek() == 1
     assert len(queue) == 1
     assert queue.dequeue() == 1
+
 
 def test_queue_multiple_operations():
     """Test a sequence of queue operations."""
@@ -120,6 +131,7 @@ def test_queue_multiple_operations():
     assert queue.dequeue() == 3
     assert queue.dequeue() == 4
     assert queue.isempty() == True
+
 
 def test_empty_queue_operations():
     """Test operations on an empty queue."""
