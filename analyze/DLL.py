@@ -123,7 +123,7 @@ class Queue:
         """Initialize an empty queue."""
         # Use doubly linked list as underlying data structure
         self._list: DoublyLinkedList = DoublyLinkedList()
-        self.timing_result = TimingResult("DLL")
+        self.timing_result = self._list.timing_result  # Share timing result with list
 
     @timed("enqueue")
     def enqueue(self, item: Any) -> None:
@@ -161,24 +161,45 @@ class Queue:
     def __add__(self, other: "Queue") -> "Queue":
         """Concatenate two queues and return a new combined queue."""
         result = Queue()
-        # Copy items from first queue
+        # If either queue is empty, return a copy of the other
+        if self.is_empty():
+            current = other._list._head
+            while current is not None:
+                result.enqueue(current.data)
+                current = current.link
+            return result
+        if other.is_empty():
+            current = self._list._head
+            while current is not None:
+                result.enqueue(current.data)
+                current = current.link
+            return result
+
+        # Copy first queue's nodes
         current = self._list._head
         while current is not None:
             result.enqueue(current.data)
             current = current.link
-        # Copy items from second queue
+
+        # Copy second queue's nodes
         current = other._list._head
         while current is not None:
             result.enqueue(current.data)
             current = current.link
+
         return result
 
     @timed("iadd")
     def __iadd__(self, other: "Queue") -> "Queue":
         """Concatenate another queue to this queue in-place."""
-        # Copy items from other queue
-        current = other._list._head
-        while current is not None:
-            self.enqueue(current.data)
-            current = current.link
+        if not other.is_empty():
+            # Copy nodes from other queue
+            current = other._list._head
+            while current is not None:
+                self.enqueue(current.data)
+                current = current.link
+            # Clear other queue
+            other._list._head = None
+            other._list._tail = None
+            other._list._length = 0
         return self

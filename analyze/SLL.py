@@ -23,6 +23,12 @@ class LinkedListPrime:
         self._length = 0
         self.timing_result = TimingResult("SLL")
 
+    def clear(self):
+        """Clear all nodes from the list."""
+        self._head = None
+        self._tail = None
+        self._length = 0
+
     @timed("addfirst")
     def addfirst(self, item):
         """Add an item to the front of the list."""
@@ -69,17 +75,17 @@ class LinkedListPrime:
         # If only one node, use removefirst logic
         if self._head is self._tail:
             return self.removefirst()
-        else:
-            # Find second-to-last node
-            currentnode = self._head
-            while currentnode.link is not self._tail:
-                currentnode = currentnode.link
-            # Store data and update tail
-            item = self._tail.data
-            self._tail = currentnode
-            self._tail.link = None
-            self._length -= 1
-            return item
+        
+        # Find second-to-last node
+        currentnode = self._head
+        while currentnode.link is not self._tail:
+            currentnode = currentnode.link
+        # Store data and update tail
+        item = self._tail.data
+        self._tail = currentnode
+        self._tail.link = None
+        self._length -= 1
+        return item
 
     @timed("length")
     def __len__(self) -> int:
@@ -137,7 +143,7 @@ class LinkedListPrime:
             self._tail = other._tail
             self._length += len(other)
             # Clear other list
-            other.__init__()
+            other.clear()
         return self
 
 
@@ -147,7 +153,7 @@ class LinkedQueue:
     def __init__(self):
         # Initialize queue with empty linked list
         self._L = LinkedListPrime()
-        self.timing_result = TimingResult("SLL")
+        self.timing_result = self._L.timing_result  # Share timing result with list
 
     @timed("enqueue")
     def enqueue(self, item):

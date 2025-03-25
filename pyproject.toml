@@ -1,23 +1,20 @@
 [tool.poetry]
-name = "data-structures-analysis"
+name = "queue-analysis"
 version = "0.1.0"
-description = "Analysis of different data structure implementations"
-authors = ["Anupraj Guragain <guragain01@allegheny.edu>"]
-packages = [
-    { include = "analyze" }
-]
+description = "Queue Implementation Performance Analysis Tool"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "analyze"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-typer = {extras = ["all"], version = "^0.9.0"}
+python = "^3.9"
+typer = "^0.9.0"
 rich = "^13.7.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+matplotlib = "^3.8.2"
 
 [tool.poetry.scripts]
 analyze = "analyze.main:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
