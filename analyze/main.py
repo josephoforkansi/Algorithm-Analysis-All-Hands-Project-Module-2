@@ -220,9 +220,7 @@ def get_selected_approaches(dll: bool, sll: bool, array: bool) -> List[QueueAppr
     ]
 
 
-def create_doubling_table(
-    results: Dict[str, List[tuple[int, float]]], queue_type: str
-) -> Table:
+def create_doubling_table(results: Dict[str, List[tuple[int, float]]], queue_type: str) -> Table:
     """Create a table showing doubling experiment results."""
     table = Table(
         box=box.ROUNDED,
@@ -234,46 +232,19 @@ def create_doubling_table(
     table.add_column("Size (n)", style="cyan", justify="right")
     for operation in sorted(results.keys()):
         table.add_column(operation, style="green", justify="right")
-    table.add_column("Growth Ratios", style="magenta", justify="right")
 
     # Get all unique sizes
     sizes = sorted(set(size for op_data in results.values() for size, _ in op_data))
-
-    # Previous times for calculating ratios
-    prev_times = {op: 0.0 for op in results.keys()}
-
+    
     # Add rows for each size
     for size in sizes:
         row = [f"{size:,}"]
-        times = []
-
+        
         # Add times for each operation
         for operation in sorted(results.keys()):
             time = next((t for s, t in results[operation] if s == size), None)
-            times.append(time if time is not None else 0.0)
-            row.append(f"{time * 1000:.6f}" if time is not None else "N/A")
-
-        # Calculate and add growth ratios
-        if size == sizes[0]:
-            row.append("Base")
-        else:
-            # Calculate average ratio compared to previous size
-            ratios = []
-            for i, time in enumerate(times):
-                if prev_times[sorted(results.keys())[i]] > 0 and time > 0:
-                    ratio = time / prev_times[sorted(results.keys())[i]]
-                    ratios.append(ratio)
-
-            if ratios:
-                avg_ratio = sum(ratios) / len(ratios)
-                row.append(f"{avg_ratio:.2f}x")
-            else:
-                row.append("N/A")
-
-        # Update previous times
-        for i, op in enumerate(sorted(results.keys())):
-            prev_times[op] = times[i]
-
+            row.append(f"{time*1000:.6f}" if time is not None else "N/A")
+        
         table.add_row(*row)
 
     return table
