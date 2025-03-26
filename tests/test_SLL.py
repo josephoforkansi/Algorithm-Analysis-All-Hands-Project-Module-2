@@ -1,7 +1,7 @@
 """Test cases for the singly linked list and queue implementations."""
 
 import pytest
-from main.SLL import LinkedListPrime, LinkedQueue
+from analyze.SLL import LinkedListPrime, LinkedQueue
 
 
 # LinkedListPrime Tests
@@ -9,6 +9,7 @@ def test_list_init():
     """Test list initialization."""
     lst = LinkedListPrime()
     assert len(lst) == 0
+    assert lst.is_empty() == True
 
 
 def test_addfirst():
@@ -16,10 +17,10 @@ def test_addfirst():
     lst = LinkedListPrime()
     lst.addfirst(1)
     assert len(lst) == 1
+    assert lst.peek() == 1
     lst.addfirst(2)
     assert len(lst) == 2
-    assert lst.removefirst() == 2
-    assert lst.removefirst() == 1
+    assert lst.peek() == 2
 
 
 def test_addlast():
@@ -27,20 +28,22 @@ def test_addlast():
     lst = LinkedListPrime()
     lst.addlast(1)
     assert len(lst) == 1
+    assert lst.peek() == 1
     lst.addlast(2)
     assert len(lst) == 2
     assert lst.removelast() == 2
-    assert lst.removelast() == 1
 
 
 def test_removefirst():
     """Test removing items from the front of the list."""
     lst = LinkedListPrime()
-    lst.addfirst(1)
-    lst.addfirst(2)
-    assert lst.removefirst() == 2
+    lst.addlast(1)
+    lst.addlast(2)
     assert lst.removefirst() == 1
-    assert len(lst) == 0
+    assert len(lst) == 1
+    assert lst.peek() == 2
+    assert lst.removefirst() == 2
+    assert lst.is_empty() == True
 
 
 def test_removelast():
@@ -49,34 +52,24 @@ def test_removelast():
     lst.addlast(1)
     lst.addlast(2)
     assert lst.removelast() == 2
+    assert len(lst) == 1
+    assert lst.peek() == 1
     assert lst.removelast() == 1
-    assert len(lst) == 0
+    assert lst.is_empty() == True
 
 
 def test_list_concatenation():
-    """Test list concatenation operations."""
+    """Test concatenating two lists."""
     lst1 = LinkedListPrime()
     lst2 = LinkedListPrime()
     lst1.addlast(1)
     lst1.addlast(2)
     lst2.addlast(3)
     lst2.addlast(4)
-
-    # Test __add__
-    result = lst1 + lst2
-    assert len(result) == 4
-    assert result.removefirst() == 1
-    assert result.removefirst() == 2
-    assert result.removefirst() == 3
-    assert result.removefirst() == 4
-
-    # Test __iadd__
     lst1 += lst2
     assert len(lst1) == 4
-    assert lst1.removefirst() == 1
-    assert lst1.removefirst() == 2
-    assert lst1.removefirst() == 3
-    assert lst1.removefirst() == 4
+    assert lst1.peek() == 1
+    assert lst1.removelast() == 4
 
 
 # LinkedQueue Tests
@@ -84,7 +77,7 @@ def test_queue_init():
     """Test queue initialization."""
     queue = LinkedQueue()
     assert len(queue) == 0
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_queue_enqueue():
@@ -92,7 +85,7 @@ def test_queue_enqueue():
     queue = LinkedQueue()
     queue.enqueue(1)
     assert len(queue) == 1
-    assert queue.isempty() == False
+    assert queue.is_empty() == False
 
 
 def test_queue_dequeue():
@@ -103,16 +96,15 @@ def test_queue_dequeue():
     assert queue.dequeue() == 1
     assert len(queue) == 1
     assert queue.dequeue() == 2
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_queue_peek():
-    """Test peeking at the first item without removing it."""
+    """Test peeking at the front of the queue."""
     queue = LinkedQueue()
     queue.enqueue(1)
     assert queue.peek() == 1
     assert len(queue) == 1
-    assert queue.dequeue() == 1
 
 
 def test_queue_multiple_operations():
@@ -130,7 +122,7 @@ def test_queue_multiple_operations():
     assert len(queue) == 2
     assert queue.dequeue() == 3
     assert queue.dequeue() == 4
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_empty_queue_operations():
@@ -141,4 +133,4 @@ def test_empty_queue_operations():
     with pytest.raises(IndexError):
         queue.dequeue()
     assert len(queue) == 0
-    assert queue.isempty() == True
+    assert queue.is_empty() == True

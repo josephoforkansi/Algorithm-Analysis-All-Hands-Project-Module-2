@@ -1,14 +1,14 @@
-"""Test cases for the ListQueueDisplay implementation."""
+"""Test cases for the list queue implementation."""
 
 import pytest
-from main.ListQueue import ListQueueDisplay
+from analyze.ListQueue import ListQueueDisplay
 
 
 def test_init():
     """Test queue initialization."""
     queue = ListQueueDisplay()
     assert len(queue) == 0
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_enqueue():
@@ -16,7 +16,7 @@ def test_enqueue():
     queue = ListQueueDisplay()
     queue.enqueue(1)
     assert len(queue) == 1
-    assert queue.isempty() == False
+    assert queue.is_empty() == False
     assert str(queue) == "[1]"
 
 
@@ -28,7 +28,7 @@ def test_dequeue():
     assert queue.dequeue() == 1
     assert len(queue) == 1
     assert queue.dequeue() == 2
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_peek():
@@ -55,7 +55,7 @@ def test_multiple_operations():
     assert len(queue) == 2
     assert queue.dequeue() == 3
     assert queue.dequeue() == 4
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
 
 
 def test_empty_queue_operations():
@@ -66,4 +66,4 @@ def test_empty_queue_operations():
     with pytest.raises(IndexError):
         queue.dequeue()
     assert len(queue) == 0
-    assert queue.isempty() == True
+    assert queue.is_empty() == True
