@@ -41,6 +41,78 @@ Our Project explores three queue implementations: Singly Linked List (SLL) Queue
 
 ## Running and Using the Tool
 
+### Setting Up
 
+To run the benchmarking tool, please install Poetry on your device. Navigate to the project directory and install dependencies if you have not already:
+
+`poetry install`
+
+### Running the Experiments
+
+The tool provides two main benchmarking experiments:
+
+#### Doubling Experiment
+
+To run the doubling experiment, execute:
+
+`poetry run analyze doubling`
+
+This experiment measures how performance will scale with the increasing input sizes.
+
+#### Implementation Performance Analysis
+
+To analyze the performance of individual queue operations, run:
+
+`poetry run analyze analyze`
+
+This command will provide execution times for operations like `addList`, `dequeue`, and `enqueue` to compare efficiency.
 
 ## Output Analysis
+
+### Replace with name
+
+#### Run of systemsense
+
+#### Run of Doubling Experiment
+
+#### Run of Performance Analysis
+
+
+
+### Replace with name
+
+#### Run of systemsense
+
+#### Run of Doubling Experiment
+
+#### Run of Performance Analysis
+
+
+
+### Replace with name
+
+#### Run of systemsense
+
+#### Run of Doubling Experiment
+
+#### Run of Performance Analysis
+
+
+
+### Replace with name
+
+#### Run of systemsense
+
+#### Run of Doubling Experiment
+
+#### Run of Performance Analysis
+
+
+
+### Replace with name
+
+#### Run of systemsense
+
+#### Run of Doubling Experiment
+
+#### Run of Performance Analysis
