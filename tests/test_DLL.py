@@ -1,7 +1,7 @@
 """Test cases for the doubly linked list and queue implementations."""
 
 import pytest
-from main.DLL import DoublyLinkedList, Queue
+from analyze.DLL import DoublyLinkedList, Queue
 
 
 # DoublyLinkedList Tests
