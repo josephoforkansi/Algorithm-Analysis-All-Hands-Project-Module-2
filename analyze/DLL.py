@@ -161,32 +161,28 @@ class Queue:
     def __add__(self, other: "Queue") -> "Queue":
         """Concatenate two queues and return a new combined queue."""
         result = Queue()
-        # If either queue is empty, return a copy of the other
+        
+        # Handle empty queue cases
         if self.is_empty():
-            current = other._list._head
-            while current is not None:
-                result.enqueue(current.data)
-                current = current.link
+            result._list._head = other._list._head
+            result._list._tail = other._list._tail
+            result._list._length = other._list._length
             return result
         if other.is_empty():
-            current = self._list._head
-            while current is not None:
-                result.enqueue(current.data)
-                current = current.link
+            result._list._head = self._list._head
+            result._list._tail = self._list._tail
+            result._list._length = self._list._length
             return result
-
-        # Copy first queue's nodes
-        current = self._list._head
-        while current is not None:
-            result.enqueue(current.data)
-            current = current.link
-
-        # Copy second queue's nodes
-        current = other._list._head
-        while current is not None:
-            result.enqueue(current.data)
-            current = current.link
-
+            
+        # Link the two lists together
+        result._list._head = self._list._head
+        result._list._tail = other._list._tail
+        result._list._length = self._list._length + other._list._length
+        
+        # Connect the lists
+        self._list._tail.link = other._list._head
+        other._list._head.prev = self._list._tail
+        
         return result
 
     @timed("iadd")
