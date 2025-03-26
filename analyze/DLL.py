@@ -123,7 +123,7 @@ class Queue:
         """Initialize an empty queue."""
         # Use doubly linked list as underlying data structure
         self._list: DoublyLinkedList = DoublyLinkedList()
-        self.timing_result = TimingResult("DLL")
+        self.timing_result = self._list.timing_result  # Share timing result with list
 
     @timed("enqueue")
     def enqueue(self, item: Any) -> None:
@@ -161,24 +161,47 @@ class Queue:
     def __add__(self, other: "Queue") -> "Queue":
         """Concatenate two queues and return a new combined queue."""
         result = Queue()
-        # Copy items from first queue
-        current = self._list._head
-        while current is not None:
-            result.enqueue(current.data)
-            current = current.link
-        # Copy items from second queue
-        current = other._list._head
-        while current is not None:
-            result.enqueue(current.data)
-            current = current.link
+
+        # Handle empty queue cases
+        if self.is_empty():
+            result._list._head = other._list._head
+            result._list._tail = other._list._tail
+            result._list._length = other._list._length
+            return result
+        if other.is_empty():
+            result._list._head = self._list._head
+            result._list._tail = self._list._tail
+            result._list._length = self._list._length
+            return result
+
+        # Link the two lists together
+        result._list._head = self._list._head
+        result._list._tail = other._list._tail
+        result._list._length = self._list._length + other._list._length
+
+        # Connect the lists
+        self._list._tail.link = other._list._head
+        other._list._head.prev = self._list._tail
+
         return result
 
     @timed("iadd")
     def __iadd__(self, other: "Queue") -> "Queue":
         """Concatenate another queue to this queue in-place."""
-        # Copy items from other queue
-        current = other._list._head
-        while current is not None:
-            self.enqueue(current.data)
-            current = current.link
+        if not other.is_empty():
+            if self.is_empty():
+                self._list._head = other._list._head
+                self._list._tail = other._list._tail
+                self._list._length = other._list._length
+            else:
+                # Link the lists together
+                self._list._tail.link = other._list._head
+                other._list._head.prev = self._list._tail
+                self._list._tail = other._list._tail
+                self._list._length += other._list._length
+
+            # Clear other queue
+            other._list._head = None
+            other._list._tail = None
+            other._list._length = 0
         return self
