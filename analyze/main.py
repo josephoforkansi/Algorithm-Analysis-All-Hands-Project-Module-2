@@ -114,7 +114,7 @@ def run_doubling_experiment(
 def plot_results(
     results: Dict[str, List[tuple[int, float]]], queue_type: str, output_dir: Path
 ):
-    """Plot doubling experiment results."""
+    """Plot doubling experiment results and display interactively."""
     plt.figure(figsize=(12, 8))
 
     for operation, data in results.items():
@@ -129,11 +129,15 @@ def plot_results(
     plt.xscale("log")
     plt.yscale("log")
 
+    # Save plot to file
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     plot_path = output_dir / f"{queue_type.lower()}_doubling_{timestamp}.png"
     plt.savefig(plot_path)
-    plt.close()
+
+    # Display plot interactively
+    plt.show()
+
     return plot_path
 
 
@@ -220,7 +224,9 @@ def get_selected_approaches(dll: bool, sll: bool, array: bool) -> List[QueueAppr
     ]
 
 
-def create_doubling_table(results: Dict[str, List[tuple[int, float]]], queue_type: str) -> Table:
+def create_doubling_table(
+    results: Dict[str, List[tuple[int, float]]], queue_type: str
+) -> Table:
     """Create a table showing doubling experiment results."""
     table = Table(
         box=box.ROUNDED,
@@ -235,16 +241,16 @@ def create_doubling_table(results: Dict[str, List[tuple[int, float]]], queue_typ
 
     # Get all unique sizes
     sizes = sorted(set(size for op_data in results.values() for size, _ in op_data))
-    
+
     # Add rows for each size
     for size in sizes:
         row = [f"{size:,}"]
-        
+
         # Add times for each operation
         for operation in sorted(results.keys()):
             time = next((t for s, t in results[operation] if s == size), None)
-            row.append(f"{time*1000:.6f}" if time is not None else "N/A")
-        
+            row.append(f"{time * 1000:.6f}" if time is not None else "N/A")
+
         table.add_row(*row)
 
     return table
