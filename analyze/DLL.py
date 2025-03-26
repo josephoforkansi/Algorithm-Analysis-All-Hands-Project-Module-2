@@ -161,7 +161,7 @@ class Queue:
     def __add__(self, other: "Queue") -> "Queue":
         """Concatenate two queues and return a new combined queue."""
         result = Queue()
-        
+
         # Handle empty queue cases
         if self.is_empty():
             result._list._head = other._list._head
@@ -173,27 +173,33 @@ class Queue:
             result._list._tail = self._list._tail
             result._list._length = self._list._length
             return result
-            
+
         # Link the two lists together
         result._list._head = self._list._head
         result._list._tail = other._list._tail
         result._list._length = self._list._length + other._list._length
-        
+
         # Connect the lists
         self._list._tail.link = other._list._head
         other._list._head.prev = self._list._tail
-        
+
         return result
 
     @timed("iadd")
     def __iadd__(self, other: "Queue") -> "Queue":
         """Concatenate another queue to this queue in-place."""
         if not other.is_empty():
-            # Copy nodes from other queue
-            current = other._list._head
-            while current is not None:
-                self.enqueue(current.data)
-                current = current.link
+            if self.is_empty():
+                self._list._head = other._list._head
+                self._list._tail = other._list._tail
+                self._list._length = other._list._length
+            else:
+                # Link the lists together
+                self._list._tail.link = other._list._head
+                other._list._head.prev = self._list._tail
+                self._list._tail = other._list._tail
+                self._list._length += other._list._length
+
             # Clear other queue
             other._list._head = None
             other._list._tail = None

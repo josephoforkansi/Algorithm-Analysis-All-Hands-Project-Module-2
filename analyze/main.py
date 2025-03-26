@@ -64,6 +64,26 @@ def get_operation_function(operation: str, queue: Any, size: int) -> Callable[[]
         for i in range(size // 10):
             other.enqueue(i)
         return lambda: queue.__iadd__(other)
+    elif operation == "addfirst":
+        if hasattr(queue, '_list'):
+            return lambda: queue._list.addfirst(size)
+        else:
+            return lambda: queue.enqueue(size)
+    elif operation == "addlast":
+        if hasattr(queue, '_list'):
+            return lambda: queue._list.addlast(size)
+        else:
+            return lambda: queue.enqueue(size)
+    elif operation == "removefirst":
+        if hasattr(queue, '_list'):
+            return lambda: queue._list.removefirst()
+        else:
+            return lambda: queue.dequeue()
+    elif operation == "removelast":
+        if hasattr(queue, '_list'):
+            return lambda: queue._list.removelast()
+        else:
+            return lambda: queue.dequeue()
     else:
         raise ValueError(f"Unknown operation: {operation}")
 
@@ -114,30 +134,41 @@ def run_doubling_experiment(
 def plot_results(
     results: Dict[str, List[tuple[int, float]]], queue_type: str, output_dir: Path
 ):
-    """Plot doubling experiment results and display interactively."""
+    """Plot doubling experiment results and save to file."""
     plt.figure(figsize=(12, 8))
-
-    for operation, data in results.items():
+    
+    # Use different markers and colors for better distinction
+    markers = ['o', 's', '^', 'D', 'v']
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+    
+    for (operation, data), marker, color in zip(sorted(results.items()), markers, colors):
         sizes, times = zip(*data)
-        plt.plot(sizes, times, marker="o", label=operation)
-
-    plt.xlabel("Input Size (n)")
-    plt.ylabel("Time (seconds)")
-    plt.title(f"Doubling Experiment Results - {queue_type}")
-    plt.legend()
-    plt.grid(True)
-    plt.xscale("log")
+        plt.plot(sizes, times, marker=marker, label=operation, color=color, 
+                linewidth=2, markersize=8, markevery=1)
+    
+    plt.xlabel("Input Size (n)", fontsize=12)
+    plt.ylabel("Time (seconds)", fontsize=12)
+    plt.title(f"Doubling Experiment Results - {queue_type}", fontsize=14, pad=20)
+    plt.legend(fontsize=10, loc='upper left')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.xscale("log", base=2)  # Use base 2 for doubling experiment
     plt.yscale("log")
-
-    # Save plot to file
+    
+    # Add minor grid lines
+    plt.grid(True, which='minor', linestyle=':', alpha=0.4)
+    
+    # Optimize layout
+    plt.tight_layout()
+    
+    # Save plot with high DPI for better quality
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     plot_path = output_dir / f"{queue_type.lower()}_doubling_{timestamp}.png"
-    plt.savefig(plot_path)
-
-    # Display plot interactively
-    plt.show()
-
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    
+    # Close the figure to free memory
+    plt.close()
+    
     return plot_path
 
 
@@ -256,6 +287,62 @@ def create_doubling_table(
     return table
 
 
+def plot_combined_results(
+    all_results: Dict[str, Dict[str, List[tuple[int, float]]]], 
+    output_dir: Path
+):
+    """Plot combined results from all implementations."""
+    # Create a figure for each operation
+    operations = set()
+    for impl_results in all_results.values():
+        operations.update(impl_results.keys())
+    
+    for operation in sorted(operations):
+        plt.figure(figsize=(12, 8))
+        
+        # Colors for different implementations
+        colors = {
+            'DLL': '#1f77b4',
+            'SLL': '#2ca02c',
+            'ARRAY': '#ff7f0e'
+        }
+        
+        # Plot data for each implementation
+        for impl_name, results in all_results.items():
+            if operation in results:
+                sizes, times = zip(*results[operation])
+                plt.plot(sizes, times, 
+                        marker='o', 
+                        label=f"{impl_name}",
+                        color=colors[impl_name],
+                        linewidth=2,
+                        markersize=8,
+                        markevery=1)
+        
+        plt.xlabel("Input Size (n)", fontsize=12)
+        plt.ylabel("Time (seconds)", fontsize=12)
+        plt.title(f"{operation} Operation Performance Comparison", fontsize=14, pad=20)
+        plt.legend(fontsize=10, loc='upper left')
+        plt.grid(True, linestyle='--', alpha=0.7)
+        plt.xscale("log", base=2)
+        plt.yscale("log")
+        
+        # Add minor grid lines
+        plt.grid(True, which='minor', linestyle=':', alpha=0.4)
+        
+        # Optimize layout
+        plt.tight_layout()
+        
+        # Save plot
+        output_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        plot_path = output_dir / f"combined_{operation.lower()}_{timestamp}.png"
+        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        console.print(f"Combined plot for {operation} saved to: {plot_path}")
+
+
 @app.command()
 def analyze(
     size: int = typer.Option(1000, "--size", "-s", help="Size of the data structure"),
@@ -300,8 +387,14 @@ def doubling(
         console.print("[red]Error: Invalid size parameters[/red]")
         return
 
-    operations = ["enqueue", "dequeue", "peek", "concat", "iconcat"]
+    operations = [
+        "enqueue", "dequeue", "peek", "concat", "iconcat",
+        "addfirst", "addlast", "removefirst", "removelast"
+    ]
     output_path = Path(output_dir)
+    
+    # Store results from all implementations
+    all_results = {}
 
     for approach in get_selected_approaches(dll, sll, array):
         queue_class = QUEUE_IMPLEMENTATIONS[approach]
@@ -314,8 +407,16 @@ def doubling(
             console.print(Panel(create_doubling_table(results, impl_name)))
             plot_path = plot_results(results, impl_name, output_path)
             console.print(f"Plot saved to: {plot_path}")
+            
+            # Store results for combined plotting
+            all_results[impl_name] = results
+            
         except Exception as e:
             console.print(f"[red]Error testing {impl_name}: {str(e)}[/red]")
+    
+    # Create combined plots
+    if all_results:
+        plot_combined_results(all_results, output_path)
 
 
 if __name__ == "__main__":
