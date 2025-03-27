@@ -20,13 +20,13 @@ Each implementation is tested for efficiency in performing:
 
 - peek(): Returns the front element without removing it.
 
-- __add__: Merges two queues into a new queue.
+- __add__(+): Merges two queues into a new queue.
 
-- __iadd__: Performs in-place merging of two queues.
+- __iadd__(+=): Performs in-place merging of two queues.
 
 ## 🚀 Project Overview
 
-This project implements and benchmarks different queue data structures to analyze their performance across common queue operations.
+This project benchmarks queue data structures to analyze their efficiency across common operations. The implementation is structured within the analyze directory.
 
 ## Queue Implementations
 
