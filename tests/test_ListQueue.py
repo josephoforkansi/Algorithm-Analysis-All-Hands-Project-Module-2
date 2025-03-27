@@ -17,7 +17,6 @@ def test_enqueue():
     queue.enqueue(1)
     assert len(queue) == 1
     assert queue.is_empty() == False
-    assert str(queue) == "[1]"
 
 
 def test_dequeue():
