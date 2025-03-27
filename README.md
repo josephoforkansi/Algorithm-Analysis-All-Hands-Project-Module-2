@@ -26,7 +26,7 @@ Each implementation is tested for efficiency in performing:
 
 ## 🚀 Project Overview
 
-This project benchmarks queue data structures to analyze their efficiency across common operations. The implementation is structured within the analyze directory.
+This project benchmarks queue data structures to analyze their efficiency across basic operations. The implementation is structured within the analyze directory.
 
 ## Queue Implementations
 
