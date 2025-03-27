@@ -46,11 +46,11 @@ The Doubly Linked List Queue and Singly Linked List Queue include extra methods 
 
 - removeLast(): Removes and returns the last element of the queue.
 
-## Supporting Tasks
+## 🛠️ Supporting Tasks
 
-- Benchmarking & Performance Testing (benchmark.py): Compares execution times for queue operations.
+- Timing Utilities (timer.py): Measures execution times for queue operations.
 
-- Test Cases (test_cases.py): Unit tests verifying correctness of implementations.
+- Test Cases (test_cases.py): Pytest-based tests verifying correctness of implementations.
 
 - README Documentation (README.md): Describes implementation, approach, and results.
 
