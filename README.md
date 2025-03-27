@@ -16,19 +16,27 @@ This project benchmarks queue data structures to analyze their efficiency across
 
 - Array-based Queue - Implemented in array_queue.py
 
-##  Basic Operations Implemented
+## 🔧 Basic Operations Implemented
 
-- enqueue(value): Adds an element to the back of the queue.
+Each queue implementation supports the following fundamental operations:
+
+- enqueue(value): Adds an element to the back of the queue (FIFO).
 
 - dequeue(): Removes and returns the front element of the queue.
 
 - peek(): Returns the front element without removing it.
 
-- add(+): Merges two queues into a new queue.
+- size(): Returns the number of elements in the queue.
 
-- iadd(+=): Performs in-place merging of two queues.
+- is_empty(): Checks if the queue is empty.
 
-Each queue implementation includes methods for:
+The queue implementations support merging operations:
+
+- add (+): Creates a new queue by merging two existing queues.
+
+- iadd (+=): Merges another queue into the current queue in place.
+
+The Doubly Linked List Queue and Singly Linked List Queue include extra methods for direct list manipulation:
 
 - addFirst(value): Adds an element to the front of the queue.
 
@@ -37,10 +45,6 @@ Each queue implementation includes methods for:
 - removeFirst(): Removes and returns the front element of the queue.
 
 - removeLast(): Removes and returns the last element of the queue.
-
-- __add__: Implements the + operation for merging two queues.
-
-- __iadd__: Implements the += operation for in-place merging.
 
 ## Supporting Tasks
 
