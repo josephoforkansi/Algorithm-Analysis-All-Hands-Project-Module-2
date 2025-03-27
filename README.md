@@ -12,6 +12,18 @@ This project evaluates the performance of:
 
 - Array-based Queue
 
+Each implementation is tested for efficiency in performing:
+
+- enqueue(value): Adds an element to the back of the queue.
+
+- dequeue(): Removes and returns the front element of the queue.
+
+- peek(): Returns the front element without removing it.
+
+- __add__: Merges two queues into a new queue.
+
+- __iadd__: Performs in-place merging of two queues.
+
 ## 🚀 Project Overview
 
 This project implements and benchmarks different queue data structures to analyze their performance across common queue operations.
