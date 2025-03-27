@@ -50,28 +50,25 @@ class DoublyLinkedList:
 
     @timed("dequeue")
     def dequeue(self) -> Any:
-        """Remove and return the last item from the queue (FIFO).
-        This implementation is O(n) as it needs to traverse to find the previous node."""
+        """Remove and return the first item from the queue (FIFO).
+        This implementation is O(1) as it removes from the head."""
         # Check if list is empty
-        if self._tail is None:
+        if self._head is None:
             raise IndexError("Queue is empty")
-            
-        # Store data from tail
-        item = self._tail.data
-        
+
+        # Store data from head
+        item = self._head.data
+
         # If only one element, clear the list
-        if self._tail == self._head:
+        if self._head == self._tail:
             self._head = None
             self._tail = None
         else:
-            # Find the previous node by traversing from head
-            current = self._head
-            while current.link != self._tail:
-                current = current.link
-            # Update links
-            current.link = None
-            self._tail = current
-            
+            # Move head to next node
+            self._head = self._head.link
+            # Clear prev pointer of new head
+            self._head.prev = None
+
         self._length -= 1
         return item
 
@@ -92,10 +89,10 @@ class DoublyLinkedList:
 
     @timed("peek")
     def peek(self) -> Any:
-        """Return the last item without removing it from the queue."""
-        if self._tail is None:
+        """Return the first item without removing it from the queue."""
+        if self._head is None:
             raise IndexError("Cannot peek at empty queue")
-        return self._tail.data
+        return self._head.data
 
     def __add__(self, other: "DoublyLinkedList") -> "DoublyLinkedList":
         """Concatenate two queues and return a new combined queue."""
@@ -133,7 +130,9 @@ class DoublyLinkedList:
             self._tail = other._tail
             self._length += len(other)
             # Clear other queue
-            other.clear()
+            other._head = None
+            other._tail = None
+            other._length = 0
         return self
 
 

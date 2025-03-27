@@ -5,7 +5,7 @@ from analyze.timer import timed, TimingResult
 
 
 class ListQueueDisplay:
-    """A queue implementation using a list with a head pointer and display functionality."""
+    """A queue implementation using a list with a head pointer."""
 
     def __init__(self):
         # Initialize head index and underlying list
@@ -25,34 +25,29 @@ class ListQueueDisplay:
 
     @timed("peek")
     def peek(self) -> Any:
-        """Return the last item in the queue without removing it."""
-        # Return the last item without removing it
+        """Return the first item in the queue without removing it."""
         if self.is_empty():
             raise IndexError("Cannot peek at empty queue")
-        return self._L[-1]
+        return self._L[self._head]
 
     @timed("dequeue")
     def dequeue(self) -> Any:
-        """Remove and return the last item from the queue.
-        This implementation is O(n) as it needs to traverse the list to find the previous node."""
-        # Check if list is empty
+        """Remove and return the first item from the queue (FIFO).
+        This implementation is O(1) as it uses the head pointer."""
         if self.is_empty():
             raise IndexError("Queue is empty")
-            
-        # Store data from tail
-        item = self._L[-1]
-        
+
+        # Store data from head
+        item = self._L[self._head]
+
         # If only one element, clear the list
         if len(self._L) == 1:
             self._L = []
+            self._head = 0
         else:
-            # Traverse to find the previous node (O(n))
-            current = 0
-            while current < len(self._L) - 1:
-                current += 1
-            # Remove the last element
-            self._L.pop()
-            
+            # Move head pointer
+            self._head += 1
+
         # Check if we need to clean up dequeued items
         if self._head >= self._cleanup_threshold:
             self._cleanup()
@@ -67,47 +62,46 @@ class ListQueueDisplay:
     @timed("length")
     def __len__(self) -> int:
         """Return the number of items currently in the queue."""
-        # Return the number of items between head and end of list
         return len(self._L) - self._head
-
-    @timed("size")
-    def size(self) -> int:
-        """Return the size of the queue."""
-        return len(self)
 
     @timed("is_empty")
     def is_empty(self) -> bool:
         """Check if the queue is empty."""
-        # Check if there are any items between head and end
         return len(self) == 0
-
-    @timed("display")
-    def display(self) -> None:
-        """Print all items in the queue."""
-        print(str(self))
-
-    @timed("str")
-    def __str__(self) -> str:
-        """Return a string representation of the queue contents."""
-        # Return string representation of items from head to end
-        return str(self._L[self._head :])
 
     @timed("add")
     def __add__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
-        """Concatenate two queues and return a new combined queue."""
+        """Concatenate two queues and return a new combined queue.
+        Time complexity: O(n) where n is the total number of elements.
+        More efficient than extend() as it pre-allocates the array."""
         result = ListQueueDisplay()
-        # Add items from first queue
-        result._L.extend(self._L[self._head :])
-        # Add items from second queue
-        result._L.extend(other._L[other._head :])
+        # Create a new list with the combined size
+        result._L = [None] * (len(self) + len(other))
+        # Copy elements from first queue
+        for i in range(len(self)):
+            result._L[i] = self._L[self._head + i]
+        # Copy elements from second queue
+        for i in range(len(other)):
+            result._L[len(self) + i] = other._L[other._head + i]
         return result
 
     @timed("iadd")
     def __iadd__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
-        """Concatenate another queue to this queue in-place."""
-        # Add items from other queue using extend for efficiency
-        self._L.extend(other._L[other._head :])
-        # Clean up the other queue's memory
+        """Concatenate another queue to this queue in-place.
+        Time complexity: O(n) where n is the total number of elements.
+        More efficient than extend() as it pre-allocates the array."""
+        # Create a new list with the combined size
+        new_list = [None] * (len(self) + len(other))
+        # Copy elements from current queue
+        for i in range(len(self)):
+            new_list[i] = self._L[self._head + i]
+        # Copy elements from other queue
+        for i in range(len(other)):
+            new_list[len(self) + i] = other._L[other._head + i]
+        # Update the queue
+        self._L = new_list
+        self._head = 0
+        # Clean up other queue
         other._L = []
         other._head = 0
         return self

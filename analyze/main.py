@@ -100,7 +100,7 @@ def run_doubling_experiment(
 
                 # Get and time a single operation
                 op_func = get_operation_function(operation, queue, size)
-                
+
                 # Time the operation
                 for _ in range(num_iterations):
                     start_time = perf_counter()
@@ -385,13 +385,7 @@ def doubling(
         console.print("[red]Error: Invalid size parameters[/red]")
         return
 
-    operations = [
-        "enqueue",
-        "dequeue",
-        "peek",
-        "concat",
-        "iconcat"
-    ]
+    operations = ["enqueue", "dequeue", "peek", "concat", "iconcat"]
     output_path = Path(output_dir)
 
     # Store results from all implementations
