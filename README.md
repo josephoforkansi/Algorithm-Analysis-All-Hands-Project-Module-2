@@ -14,15 +14,15 @@ This project evaluates the performance of:
 
 Each implementation is tested for efficiency in performing:
 
-- enqueue(value): Adds an element to the back of the queue.
+- enqueue(value): Adds an element to the back of the queue
 
-- dequeue(): Removes and returns the front element of the queue.
+- dequeue(): Removes and returns the front element of the queue 
 
-- peek(): Returns the front element without removing it.
+- peek(): Returns the front element without removing it
 
-- add(+): Merges two queues into a new queue.
+- concat(+): Merges two queues into a new queue
 
-- iadd(+=): Performs in-place merging of two queues.
+- iconcat(+=): Performs in-place merging of two queues
 
 ## 🚀 Project Overview
 
@@ -40,53 +40,54 @@ This project benchmarks queue data structures to analyze their efficiency across
 
 Each queue implementation includes methods for:
 
-- addFirst(value): Adds an element to the front of the queue.
+- enqueue(value): Adds an element to the back of the queue
 
-- addLast(value): Adds an element to the back of the queue.
+- dequeue(): Removes and returns the front element of the queue
 
-- removeFirst(): Removes and returns the front element of the queue.
+- peek(): Returns the front element without removing it
 
-- removeLast(): Removes and returns the last element of the queue.
+- concat(+): Implements the + operation for merging two queues
 
-- __add__: Implements the + operation for merging two queues.
-
-- __iadd__: Implements the += operation for in-place merging.
+- iconcat(+=): Implements the += operation for in-place merging
 
 ## Supporting Tasks
 
-- Benchmarking & Performance Testing (benchmark.py): Compares execution times for queue operations.
-
-- Test Cases (test_cases.py): Unit tests verifying correctness of implementations.
-
-- README Documentation (README.md): Describes implementation, approach, and results.
-
-- Data Collection: Gathering and analyzing performance metrics.
+- Main Implementation (`main.py`): Core functionality and CLI interface
+- Queue Approach (`queue_approach.py`): Queue implementation strategy
+- Timer (`timer.py`): Performance measurement utilities
+- Results: Performance data and analysis stored in `results/` directory
+- Test Cases: Unit tests verifying correctness of implementations
+- Documentation: Project documentation and analysis
 
 ## Running the Project
 
-To run the program
+To run the program:
+```bash
+cd analyze && poetry install
+```
 
-- `cd analyze && poetry install`
+To run just the analyze:
+```bash
+poetry run analyze analyze
+```
 
-To run just the analyze
-
-- `poetry run analyze analyze`
-
-To run doubling experiment
-
-- `poetry run analyze doubling`
+To run doubling experiment:
+```bash
+poetry run analyze doubling
+```
 
 You can also run the commands below for a more detailed approach:
-
-- `poetry run analyze --help`
-- `poetry run analyze analyze --help`
-- `poetry run analyze doubling --help`
+```bash
+poetry run analyze --help
+poetry run analyze analyze --help
+poetry run analyze doubling --help
+```
 
 ## Results & Findings
 
 The benchmarking results will provide insights into the performance trade-offs between SLL, DLL, and Array-based queue implementations. These results will be documented and analyzed as part of the project conclusion.
 
-Contributors
+## Contributors
 
 - Benchmarking: [2 team members]
 
