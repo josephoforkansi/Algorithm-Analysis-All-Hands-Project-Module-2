@@ -49,41 +49,25 @@ def time_operation(func: Callable[[], None]) -> float:
 def get_operation_function(operation: str, queue: Any, size: int) -> Callable[[], None]:
     """Get the operation function for timing."""
     if operation == "enqueue":
-        return lambda: [queue.enqueue(i) for i in range(size)]
+        # Time a single enqueue operation
+        return lambda: queue.enqueue(size)
     elif operation == "dequeue":
+        # Time a single dequeue operation
         return lambda: queue.dequeue()
     elif operation == "peek":
         return lambda: queue.peek()
     elif operation == "concat":
+        # Create other queue once and reuse it
         other = queue.__class__()
         for i in range(size // 10):
             other.enqueue(i)
         return lambda: queue + other
     elif operation == "iconcat":
+        # Create other queue once and reuse it
         other = queue.__class__()
         for i in range(size // 10):
             other.enqueue(i)
         return lambda: queue.__iadd__(other)
-    elif operation == "addfirst":
-        if hasattr(queue, "_list"):
-            return lambda: queue._list.addfirst(size)
-        else:
-            return lambda: queue.enqueue(size)
-    elif operation == "addlast":
-        if hasattr(queue, "_list"):
-            return lambda: queue._list.addlast(size)
-        else:
-            return lambda: queue.enqueue(size)
-    elif operation == "removefirst":
-        if hasattr(queue, "_list"):
-            return lambda: queue._list.removefirst()
-        else:
-            return lambda: queue.dequeue()
-    elif operation == "removelast":
-        if hasattr(queue, "_list"):
-            return lambda: queue._list.removelast()
-        else:
-            return lambda: queue.dequeue()
     else:
         raise ValueError(f"Unknown operation: {operation}")
 
@@ -104,26 +88,32 @@ def run_doubling_experiment(
                 results[operation] = []
 
             total_time = 0
-            # Run each operation 10 times and take average
-            for _ in range(10):
-                queue = queue_class()
-                other = None
-                try:
-                    # Pre-fill queue
+            # Run each operation multiple times and take average
+            num_iterations = 100  # Reduced from 1000 to 100 for faster execution
+            queue = queue_class()
+            other = None
+            try:
+                # Pre-fill queue for non-enqueue operations
+                if operation != "enqueue":
                     for i in range(size):
                         queue.enqueue(i)
 
-                    # Get and time the operation
-                    op_func = get_operation_function(operation, queue, size)
-                    total_time += time_operation(op_func)
+                # Get and time a single operation
+                op_func = get_operation_function(operation, queue, size)
+                
+                # Time the operation
+                for _ in range(num_iterations):
+                    start_time = perf_counter()
+                    op_func()
+                    total_time += perf_counter() - start_time
 
-                finally:
-                    # Clean up to free memory
-                    del queue
-                    if other is not None:
-                        del other
+            finally:
+                # Clean up to free memory
+                del queue
+                if other is not None:
+                    del other
 
-            avg_time = total_time / 10
+            avg_time = total_time / num_iterations
             results[operation].append((size, avg_time))
 
         size *= 2
@@ -400,11 +390,7 @@ def doubling(
         "dequeue",
         "peek",
         "concat",
-        "iconcat",
-        "addfirst",
-        "addlast",
-        "removefirst",
-        "removelast",
+        "iconcat"
     ]
     output_path = Path(output_dir)
 

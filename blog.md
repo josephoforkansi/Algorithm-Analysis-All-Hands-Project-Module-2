@@ -23,19 +23,78 @@ Each implementation is tested to measure how efficiently these operations execut
 
 ### Operations
 
-Our Project explores three queue implementations: Singly Linked List (SLL) Queue, Doubly Linked List (DLL) Queue, and Array-based Queue. Each implementation is different in its structure, performance, and memory efficiency but supports fundamental queue operations.
+Our Project explores three queue implementations: Singly Linked List (SLL) Queue, Doubly Linked List (DLL) Queue, and Array-based Queue. Each implementation is different in its structure and performance but supports fundamental queue operations.
 
 ### Singly Linked List (SLL) Queue
 
+The SLL Queue implementation uses a singly linked list structure where each node contains data and a reference to the next node. Here's the core implementation:
+
+```python
+class ListNode:
+    def __init__(self, data, link=None):
+        self.data = data
+        self.link = link
+
+class LinkedListPrime:
+    def __init__(self):
+        self._head = None
+        self._tail = None
+        self._length = 0
+```
+
 #### SLL Considerations
+- O(1) operations for addFirst and removeFirst: The implementation maintains a head pointer, allowing immediate access to the front of the list.
+- O(n) for removeLast as it needs to traverse the list: Since nodes only have a next pointer, finding the last element requires traversing the entire list.
+- Supports efficient concatenation with O(1) using tail pointer: The tail pointer allows quick access to the end of the list for joining operations.
+- Best for FIFO operations where elements are added and removed from the front: The structure naturally supports first-in-first-out operations with minimal overhead.
 
 ### Doubly Linked List (DLL) Queue
 
+The DLL Queue uses a doubly linked list where each node has references to both next and previous nodes:
+
+```python
+class DLLNode:
+    def __init__(self, data, prev=None, next=None):
+        self.data = data
+        self.prev = prev
+        self.next = next
+
+class DoublyLinkedList:
+    def __init__(self):
+        self._head = None
+        self._tail = None
+        self._length = 0
+```
+
 #### DLL Considerations
+- O(1) operations for both addFirst/removeFirst and addLast/removeLast: The bidirectional links allow immediate access to both ends of the list.
+- Efficient bidirectional traversal: Each node maintains references to both its next and previous nodes, enabling traversal in either direction.
+- O(1) concatenation operations: The bidirectional structure allows efficient joining of lists at either end.
+- Ideal for applications requiring frequent operations at both ends: The structure provides balanced performance for operations at both the front and back of the list.
 
 ### Array-based Queue
 
+The Array Queue uses a dynamic array implementation with automatic resizing:
+
+```python
+class ListQueueDisplay:
+    def __init__(self):
+        self._items = []
+        self._size = 0
+```
+
 #### Array-based Queue Considerations
+- O(1) random access: The array structure provides direct access to any element by index.
+- O(n) worst-case for addFirst/removeFirst due to shifting: Adding or removing elements at the front requires shifting all other elements.
+- O(1) amortized for addLast/removeLast: Appending or removing from the end doesn't require shifting other elements.
+- Best for applications with predictable size and infrequent resizing: The array structure works well when the queue size is relatively stable.
+
+Each implementation has its strengths:
+- SLL: Efficient for FIFO operations, with minimal overhead for front-end operations
+- DLL: Flexible bidirectional operations, with balanced performance for operations at both ends
+- Array: Fast random access, with efficient operations at the end of the queue
+
+The choice between implementations depends on the specific use case and performance requirements of the application.
 
 ### Benchmarking
 
@@ -182,11 +241,109 @@ Combined plot for removelast saved to: results\combined_removelast_20250326_1630
 
 
 
-### Replace with name
+### Anton Hedlund
 
 #### Run of systemsense
 
+```cmd
+poetry run systemsense completeinfo
+Displaying System Information
+
+╭─────────────────────────────────────────────────────── System Information ───────────────────────────────────────────────────────╮
+│ ╭──────────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────╮ │
+│ │ System Parameter │ Parameter Value                                                                                           │ │
+│ ├──────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ battery          │ 79.00% battery life remaining, 6:15:00 seconds remaining                                                  │ │
+│ │ cpu              │ arm                                                                                                       │ │
+│ │ cpucores         │ 11 cores                                                                                                  │ │
+│ │ cpufrequencies   │ Min: Unknown Mhz, Max: Unknown Mhz                                                                        │ │
+│ │ datetime         │ 2025-03-26 22:32:34.509801                                                                                │ │
+│ │ disk             │ Using 10.39 GB of 460.43 GB                                                                               │ │
+│ │ hostname         │ MacBook-Pro-Anton.local                                                                                   │ │
+│ │ memory           │ Using 6.58 GB of 18.00 GB                                                                                 │ │
+│ │ platform         │ macOS-15.3.2-arm64-arm-64bit                                                                              │ │
+│ │ pythonversion    │ 3.12.8                                                                                                    │ │
+│ │ runningprocesses │ 594 running processes                                                                                     │ │
+│ │ swap             │ Using 0.49 GB of 2.00 GB                                                                                  │ │
+│ │ system           │ Darwin                                                                                                    │ │
+│ │ systemload       │ Average Load: 2.82, CPU Utilization: 20.50%                                                               │ │
+│ │ virtualenv       │ /Users/antonhedlund/Compsci/algorhytms_202/computer-science-202-algorithm-engineering-project-1-ahedlund… │ │
+│ ╰──────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Displaying Benchmark Results
+
+╭────────────────────────────────────────────────────────────────────────── Benchmark Results ──────────────────────────────────────────────────────────────────────────╮
+│ ╭────────────────┬─────────────────────────────────────────────────────────────────╮                                                                                  │
+│ │ Benchmark Name │ Benchmark Results (sec)                                         │                                                                                  │
+│ ├────────────────┼─────────────────────────────────────────────────────────────────┤                                                                                  │
+│ │ addition       │ [0.37942662500427105, 0.38371645798906684, 0.39661604099092074] │                                                                                  │
+│ │ concatenation  │ [1.831420500006061, 1.8045542500040028, 1.8012452079856303]     │                                                                                  │
+│ │ exponentiation │ [2.1522245419910178, 2.1751532499911264, 2.2064731669961475]    │                                                                                  │
+│ │ multiplication │ [0.4023984170053154, 0.45870250000734814, 0.5052193750161678]   │                                                                                  │
+│ │ rangelist      │ [0.10194725001929328, 0.09878037497401237, 0.10006220897776075] │                                                                                  │
+│ ╰────────────────┴─────────────────────────────────────────────────────────────────╯                                                                                  │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
 #### Run of Doubling Experiment
+
+```cmd
+poetry run analyze doubling --initial-size 1000 --max-size 1000000
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                         DLL Queue Doubling Experiment Results                                                            │
+│ ╭──────────┬──────────┬──────────┬──────────┬──────────┬────────────┬──────────┬──────────┬─────────────┬────────────╮                   │
+│ │ Size (n) │ addfirst │  addlast │   concat │  dequeue │    enqueue │  iconcat │     peek │ removefirst │ removelast │                   │
+│ ├──────────┼──────────┼──────────┼──────────┼──────────┼────────────┼──────────┼──────────┼─────────────┼────────────┤                   │
+│ │    1,000 │ 0.000933 │ 0.000779 │ 0.003279 │ 0.001304 │   1.187083 │ 0.002650 │ 0.002125 │    0.000829 │   0.000858 │                   │
+│ │    2,000 │ 0.000825 │ 0.000775 │ 0.003075 │ 0.001142 │   2.307400 │ 0.002612 │ 0.002213 │    0.000746 │   0.001033 │                   │
+│ │    4,000 │ 0.000867 │ 0.000854 │ 0.003321 │ 0.001275 │   4.624387 │ 0.002771 │ 0.002392 │    0.000792 │   0.000717 │                   │
+│ │    8,000 │ 0.000962 │ 0.000812 │ 0.003508 │ 0.001333 │  11.926154 │ 0.003129 │ 0.002292 │    0.000904 │   0.000854 │                   │
+│ │   16,000 │ 0.000937 │ 0.000829 │ 0.003629 │ 0.001471 │  21.639504 │ 0.002938 │ 0.002558 │    0.000992 │   0.000862 │                   │
+│ │   32,000 │ 0.001067 │ 0.000850 │ 0.004012 │ 0.001646 │  42.478613 │ 0.003254 │ 0.002608 │    0.001079 │   0.001046 │                   │
+│ │   64,000 │ 0.001571 │ 0.000917 │ 0.004800 │ 0.001962 │  86.116583 │ 0.004604 │ 0.003258 │    0.001391 │   0.001304 │                   │
+│ │  128,000 │ 0.001579 │ 0.000854 │ 0.005696 │ 0.002279 │ 180.033017 │ 0.004483 │ 0.003975 │    0.001733 │   0.001538 │                   │
+│ │  256,000 │ 0.001767 │ 0.001013 │ 0.007225 │ 0.003154 │ 389.395746 │ 0.005829 │ 0.005058 │    0.002362 │   0.002246 │                   │
+│ │  512,000 │ 0.002196 │ 0.001092 │ 0.007658 │ 0.003504 │ 852.456588 │ 0.006071 │ 0.005192 │    0.002467 │   0.002058 │                   │
+│ ╰──────────┴──────────┴──────────┴──────────┴──────────┴────────────┴──────────┴──────────┴─────────────┴────────────╯                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Plot saved to: results/dll_doubling_20250326_222545.png
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                         SLL Queue Doubling Experiment Results                                                            │
+│ ╭──────────┬──────────┬──────────┬──────────┬──────────┬────────────┬──────────┬──────────┬─────────────┬────────────╮                   │
+│ │ Size (n) │ addfirst │  addlast │   concat │  dequeue │    enqueue │  iconcat │     peek │ removefirst │ removelast │                   │
+│ ├──────────┼──────────┼──────────┼──────────┼──────────┼────────────┼──────────┼──────────┼─────────────┼────────────┤                   │
+│ │    1,000 │ 0.001379 │ 0.001338 │ 0.002692 │ 0.001696 │   1.105913 │ 0.001854 │ 0.000813 │    0.001312 │   0.001246 │                   │
+│ │    2,000 │ 0.001383 │ 0.001379 │ 0.002367 │ 0.001317 │   2.142629 │ 0.001692 │ 0.000754 │    0.001317 │   0.001287 │                   │
+│ │    4,000 │ 0.001383 │ 0.001404 │ 0.002708 │ 0.001571 │   4.395746 │ 0.001913 │ 0.000796 │    0.001417 │   0.001371 │                   │
+│ │    8,000 │ 0.001554 │ 0.001454 │ 0.002854 │ 0.001917 │   8.810400 │ 0.002692 │ 0.001354 │    0.001450 │   0.001813 │                   │
+│ │   16,000 │ 0.001713 │ 0.001529 │ 0.003325 │ 0.001950 │  21.788742 │ 0.002888 │ 0.001083 │    0.001600 │   0.001729 │                   │
+│ │   32,000 │ 0.001871 │ 0.001817 │ 0.004583 │ 0.002558 │  38.786442 │ 0.003367 │ 0.001054 │    0.002154 │   0.002058 │                   │
+│ │   64,000 │ 0.002275 │ 0.001733 │ 0.005712 │ 0.003479 │  79.691100 │ 0.004421 │ 0.001900 │    0.002829 │   0.002983 │                   │
+│ │  128,000 │ 0.002171 │ 0.002517 │ 0.005838 │ 0.003308 │ 163.600163 │ 0.005296 │ 0.002696 │    0.003925 │   0.003741 │                   │
+│ │  256,000 │ 0.004229 │ 0.003879 │ 0.007388 │ 0.005596 │ 328.856175 │ 0.008075 │ 0.004179 │    0.004583 │   0.005112 │                   │
+│ │  512,000 │ 0.005909 │ 0.005517 │ 0.010196 │ 0.006908 │ 657.338554 │ 0.008758 │ 0.005296 │    0.007529 │   0.006167 │                   │
+│ ╰──────────┴──────────┴──────────┴──────────┴──────────┴────────────┴──────────┴──────────┴─────────────┴────────────╯                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Plot saved to: results/sll_doubling_20250326_222804.png
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                        ARRAY Queue Doubling Experiment Results                                                           │
+│ ╭──────────┬──────────┬──────────┬──────────┬──────────┬────────────┬──────────┬──────────┬─────────────┬────────────╮                   │
+│ │ Size (n) │ addfirst │  addlast │   concat │  dequeue │    enqueue │  iconcat │     peek │ removefirst │ removelast │                   │
+│ ├──────────┼──────────┼──────────┼──────────┼──────────┼────────────┼──────────┼──────────┼─────────────┼────────────┤                   │
+│ │    1,000 │ 0.000600 │ 0.000629 │ 0.004746 │ 0.002858 │   0.494617 │ 0.001500 │ 0.001650 │    0.002171 │   0.002054 │                   │
+│ │    2,000 │ 0.000633 │ 0.000675 │ 0.008996 │ 0.002446 │   0.945646 │ 0.001413 │ 0.001775 │    0.002300 │   0.002216 │                   │
+│ │    4,000 │ 0.000675 │ 0.000683 │ 0.018225 │ 0.002262 │   1.855137 │ 0.001954 │ 0.001704 │    0.002346 │   0.002200 │                   │
+│ │    8,000 │ 0.000788 │ 0.000691 │ 0.050946 │ 0.002296 │   3.635554 │ 0.003804 │ 0.001712 │    0.002704 │   0.002471 │                   │
+│ │   16,000 │ 0.000896 │ 0.000804 │ 0.072767 │ 0.003033 │   7.373833 │ 0.007450 │ 0.002134 │    0.002683 │   0.002567 │                   │
+│ │   32,000 │ 0.000837 │ 0.000883 │ 0.147313 │ 0.002829 │  14.812092 │ 0.015137 │ 0.002171 │    0.002892 │   0.002600 │                   │
+│ │   64,000 │ 0.000783 │ 0.000754 │ 0.345496 │ 0.002667 │  28.765463 │ 0.034875 │ 0.003279 │    0.002896 │   0.003229 │                   │
+│ │  128,000 │ 0.000829 │ 0.000742 │ 0.670671 │ 0.004758 │  58.716100 │ 0.082629 │ 0.004554 │    0.002908 │   0.004354 │                   │
+│ │  256,000 │ 0.002579 │ 0.002379 │ 1.480738 │ 0.006492 │ 118.324867 │ 0.195350 │ 0.003046 │    0.006863 │   0.006950 │                   │
+│ │  512,000 │ 0.003900 │ 0.003163 │ 4.086571 │ 0.009087 │ 238.503688 │ 0.702646 │ 0.004538 │    0.007342 │   0.007658 │                   │
+│ ╰──────────┴──────────┴──────────┴──────────┴──────────┴────────────┴──────────┴──────────┴─────────────┴────────────╯                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 #### Run of Performance Analysis
 

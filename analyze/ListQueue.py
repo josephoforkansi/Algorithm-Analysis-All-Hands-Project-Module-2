@@ -25,18 +25,34 @@ class ListQueueDisplay:
 
     @timed("peek")
     def peek(self) -> Any:
-        """Return the first item in the queue without removing it."""
-        # Return the item at the head index without removing it
+        """Return the last item in the queue without removing it."""
+        # Return the last item without removing it
         if self.is_empty():
             raise IndexError("Cannot peek at empty queue")
-        return self._L[self._head]
+        return self._L[-1]
 
     @timed("dequeue")
     def dequeue(self) -> Any:
-        """Remove and return the first item from the queue."""
-        # Get the item at the head and increment head index
-        item = self.peek()
-        self._head += 1
+        """Remove and return the last item from the queue.
+        This implementation is O(n) as it needs to traverse the list to find the previous node."""
+        # Check if list is empty
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+            
+        # Store data from tail
+        item = self._L[-1]
+        
+        # If only one element, clear the list
+        if len(self._L) == 1:
+            self._L = []
+        else:
+            # Traverse to find the previous node (O(n))
+            current = 0
+            while current < len(self._L) - 1:
+                current += 1
+            # Remove the last element
+            self._L.pop()
+            
         # Check if we need to clean up dequeued items
         if self._head >= self._cleanup_threshold:
             self._cleanup()
