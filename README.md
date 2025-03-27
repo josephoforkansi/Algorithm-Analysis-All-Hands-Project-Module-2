@@ -4,17 +4,13 @@
 
 **What are the performance differences between Singly Linked List (SLL) Queue, Doubly Linked List (DLL) Queue, and Array-based Queue implementations when executing basic operations:**
 
-- addFirst
+This project evaluates the performance of:
 
-- addLast
+- Singly Linked List (SLL) Queue
 
-- removeFirst
+- Doubly Linked List (DLL) Queue
 
-- removeLast
-
-- add (+)
-
-- iadd (+=)
+- Array-based Queue
 
 ## 🚀 Project Overview
 
