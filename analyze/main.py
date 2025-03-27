@@ -12,7 +12,7 @@ from pathlib import Path
 from datetime import datetime
 
 from analyze.DLL import Queue as DLLQueue
-from analyze.SLL import LinkedQueue as SLLQueue
+from analyze.SLL import BasicSLLQueue as SLLQueue
 from analyze.ListQueue import ListQueueDisplay as ArrayQueue
 from analyze.timer import TimingResult
 from analyze.queue_approach import QueueApproach
@@ -72,106 +72,6 @@ def get_operation_function(operation: str, queue: Any, size: int) -> Callable[[]
         raise ValueError(f"Unknown operation: {operation}")
 
 
-def run_doubling_experiment(
-    queue_class: Type[Any], initial_size: int, max_size: int, operations: List[str]
-) -> Dict[str, List[tuple[int, float]]]:
-    """Run doubling experiment on a queue implementation."""
-    if initial_size <= 0 or max_size <= 0 or initial_size > max_size:
-        raise ValueError("Invalid size parameters")
-
-    results = {}
-    size = initial_size
-
-    while size <= max_size:
-        for operation in operations:
-            if operation not in results:
-                results[operation] = []
-
-            total_time = 0
-            # Run each operation multiple times and take average
-            num_iterations = 100  # Reduced from 1000 to 100 for faster execution
-            queue = queue_class()
-            other = None
-            try:
-                # Pre-fill queue for non-enqueue operations
-                if operation != "enqueue":
-                    for i in range(size):
-                        queue.enqueue(i)
-
-                # Get and time a single operation
-                op_func = get_operation_function(operation, queue, size)
-
-                # Time the operation
-                for _ in range(num_iterations):
-                    start_time = perf_counter()
-                    op_func()
-                    total_time += perf_counter() - start_time
-
-            finally:
-                # Clean up to free memory
-                del queue
-                if other is not None:
-                    del other
-
-            avg_time = total_time / num_iterations
-            results[operation].append((size, avg_time))
-
-        size *= 2
-
-    return results
-
-
-def plot_results(
-    results: Dict[str, List[tuple[int, float]]], queue_type: str, output_dir: Path
-):
-    """Plot doubling experiment results and save to file."""
-    plt.figure(figsize=(12, 8))
-
-    # Use different markers and colors for better distinction
-    markers = ["o", "s", "^", "D", "v"]
-    colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"]
-
-    for (operation, data), marker, color in zip(
-        sorted(results.items()), markers, colors
-    ):
-        sizes, times = zip(*data)
-        plt.plot(
-            sizes,
-            times,
-            marker=marker,
-            label=operation,
-            color=color,
-            linewidth=2,
-            markersize=8,
-            markevery=1,
-        )
-
-    plt.xlabel("Input Size (n)", fontsize=12)
-    plt.ylabel("Time (seconds)", fontsize=12)
-    plt.title(f"Doubling Experiment Results - {queue_type}", fontsize=14, pad=20)
-    plt.legend(fontsize=10, loc="upper left")
-    plt.grid(True, linestyle="--", alpha=0.7)
-    plt.xscale("log", base=2)  # Use base 2 for doubling experiment
-    plt.yscale("log")
-
-    # Add minor grid lines
-    plt.grid(True, which="minor", linestyle=":", alpha=0.4)
-
-    # Optimize layout
-    plt.tight_layout()
-
-    # Save plot with high DPI for better quality
-    output_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    plot_path = output_dir / f"{queue_type.lower()}_doubling_{timestamp}.png"
-    plt.savefig(plot_path, dpi=300, bbox_inches="tight")
-
-    # Close the figure to free memory
-    plt.close()
-
-    return plot_path
-
-
 def run_tests(queue_class: Type[Any], size: int) -> TimingResult:
     """Run performance tests on a queue implementation."""
     if size <= 0:
@@ -209,209 +109,178 @@ def run_tests(queue_class: Type[Any], size: int) -> TimingResult:
         del queue
 
 
-def create_table(result: TimingResult) -> Table:
-    """Create a table showing timing information."""
-    impl_type = (
-        "DLL" if "DLL" in result.name else "SLL" if "SLL" in result.name else "Array"
-    )
+def plot_results(results: Dict[str, List[float]], sizes: List[int], title: str):
+    """Plot timing results."""
+    plt.figure(figsize=(10, 6))
+    for operation, times in results.items():
+        plt.plot(sizes, times, marker='o', label=operation)
+    plt.title(title)
+    plt.xlabel('Size (n)')
+    plt.ylabel('Time (ms)')
+    plt.grid(True)
+    plt.legend()
+    
+    # Create results directory if it doesn't exist
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+    
+    # Save plot with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    plt.savefig(results_dir / f"{title.lower().replace(' ', '_')}_{timestamp}.png")
+    plt.close()
 
-    table = Table(
-        box=box.ROUNDED,
-        show_header=True,
-        title=f"[bold]{impl_type} Queue Implementation Performance Analysis[/bold]",
-    )
 
-    table.add_column("Operation", style="cyan")
-    table.add_column("Time (ms)", justify="right", style="green")
-    table.add_column("Elements", justify="right", style="yellow")
-    table.add_column("Time/Element (ms)", justify="right", style="magenta")
+def display_results(results: List[TimingResult], size: int):
+    """Display timing results in a formatted table."""
+    for result in results:
+        table = Table(
+            title=f"{result.name} Queue Implementation Performance Analysis",
+            box=box.ROUNDED,
+            show_header=True,
+            header_style="bold magenta",
+        )
+        table.add_column("Operation", style="cyan")
+        table.add_column("Time (ms)", justify="right")
+        table.add_column("Elements", justify="right")
+        table.add_column("Time/Element (ms)", justify="right")
 
-    for op_name, (time, elements) in sorted(result.operations.items()):
-        if time > 0 and elements > 0:
-            time_ms = time * 1000
-            time_per_element_ms = (time / elements) * 1000
+        for operation, (total_time, total_elements) in result.operations.items():
+            time_per_element = total_time / total_elements if total_elements > 0 else 0
             table.add_row(
-                op_name,
-                f"{time_ms:.6f}",
-                f"{elements:,}",
-                f"{time_per_element_ms:.6f}",
+                operation,
+                f"{total_time:.6f}",
+                f"{total_elements:,}",
+                f"{time_per_element:.6f}",
             )
 
-    return table
-
-
-def get_selected_approaches(dll: bool, sll: bool, array: bool) -> List[QueueApproach]:
-    """Get list of selected queue approaches based on command line options."""
-    if not any([dll, sll, array]):
-        return list(QueueApproach)
-    return [
-        app
-        for app, flag in [
-            (QueueApproach.dll, dll),
-            (QueueApproach.sll, sll),
-            (QueueApproach.array, array),
-        ]
-        if flag
-    ]
-
-
-def create_doubling_table(
-    results: Dict[str, List[tuple[int, float]]], queue_type: str
-) -> Table:
-    """Create a table showing doubling experiment results."""
-    table = Table(
-        box=box.ROUNDED,
-        show_header=True,
-        title=f"[bold]{queue_type} Queue Doubling Experiment Results[/bold]",
-    )
-
-    # Add columns
-    table.add_column("Size (n)", style="cyan", justify="right")
-    for operation in sorted(results.keys()):
-        table.add_column(operation, style="green", justify="right")
-
-    # Get all unique sizes
-    sizes = sorted(set(size for op_data in results.values() for size, _ in op_data))
-
-    # Add rows for each size
-    for size in sizes:
-        row = [f"{size:,}"]
-
-        # Add times for each operation
-        for operation in sorted(results.keys()):
-            time = next((t for s, t in results[operation] if s == size), None)
-            row.append(f"{time * 1000:.6f}" if time is not None else "N/A")
-
-        table.add_row(*row)
-
-    return table
-
-
-def plot_combined_results(
-    all_results: Dict[str, Dict[str, List[tuple[int, float]]]], output_dir: Path
-):
-    """Plot combined results from all implementations."""
-    # Create a figure for each operation
-    operations = set()
-    for impl_results in all_results.values():
-        operations.update(impl_results.keys())
-
-    for operation in sorted(operations):
-        plt.figure(figsize=(12, 8))
-
-        # Colors for different implementations
-        colors = {"DLL": "#1f77b4", "SLL": "#2ca02c", "ARRAY": "#ff7f0e"}
-
-        # Plot data for each implementation
-        for impl_name, results in all_results.items():
-            if operation in results:
-                sizes, times = zip(*results[operation])
-                plt.plot(
-                    sizes,
-                    times,
-                    marker="o",
-                    label=f"{impl_name}",
-                    color=colors[impl_name],
-                    linewidth=2,
-                    markersize=8,
-                    markevery=1,
-                )
-
-        plt.xlabel("Input Size (n)", fontsize=12)
-        plt.ylabel("Time (seconds)", fontsize=12)
-        plt.title(f"{operation} Operation Performance Comparison", fontsize=14, pad=20)
-        plt.legend(fontsize=10, loc="upper left")
-        plt.grid(True, linestyle="--", alpha=0.7)
-        plt.xscale("log", base=2)
-        plt.yscale("log")
-
-        # Add minor grid lines
-        plt.grid(True, which="minor", linestyle=":", alpha=0.4)
-
-        # Optimize layout
-        plt.tight_layout()
-
-        # Save plot
-        output_dir.mkdir(parents=True, exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        plot_path = output_dir / f"combined_{operation.lower()}_{timestamp}.png"
-        plt.savefig(plot_path, dpi=300, bbox_inches="tight")
-        plt.close()
-
-        console.print(f"Combined plot for {operation} saved to: {plot_path}")
+        console.print(Panel(table, title=f"Size: {size:,}"))
 
 
 @app.command()
 def analyze(
-    size: int = typer.Option(1000, "--size", "-s", help="Size of the data structure"),
-    dll: bool = typer.Option(False, "--dll", help="Test DLL Queue implementation"),
-    sll: bool = typer.Option(False, "--sll", help="Test SLL Queue implementation"),
-    array: bool = typer.Option(
-        False, "--array", help="Test Array Queue implementation"
-    ),
+    size: int = typer.Option(1000, help="Size of queue for testing"),
+    dll: bool = typer.Option(False, help="Test DLL implementation"),
+    sll: bool = typer.Option(False, help="Test SLL implementation"),
+    array: bool = typer.Option(False, help="Test Array implementation"),
 ):
-    """Run basic performance analysis on queue implementations."""
-    if size <= 0:
-        console.print("[red]Error: Size must be positive[/red]")
+    """Run performance analysis on queue implementations."""
+    if not any([dll, sll, array]):
+        console.print("[yellow]Please specify at least one implementation to test[/yellow]")
         return
 
-    for approach in get_selected_approaches(dll, sll, array):
-        try:
-            result = run_tests(QUEUE_IMPLEMENTATIONS[approach], size)
-            console.print(Panel(create_table(result)))
-        except Exception as e:
-            console.print(f"[red]Error testing {approach.name}: {str(e)}[/red]")
+    results = []
+    for approach, queue_class in QUEUE_IMPLEMENTATIONS.items():
+        if (approach == QueueApproach.dll and dll) or \
+           (approach == QueueApproach.sll and sll) or \
+           (approach == QueueApproach.array and array):
+            try:
+                result = run_tests(queue_class, size)
+                results.append(result)
+            except Exception as e:
+                console.print(f"[red]Error testing {approach.value}: {str(e)}[/red]")
+
+    display_results(results, size)
 
 
 @app.command()
 def doubling(
-    initial_size: int = typer.Option(
-        100, "--initial-size", "-n", help="Initial size for doubling experiment"
-    ),
-    max_size: int = typer.Option(
-        10000, "--max-size", "-m", help="Maximum size for doubling experiment"
-    ),
-    output_dir: str = typer.Option(
-        "results", "--output-dir", "-o", help="Directory to save results"
-    ),
-    dll: bool = typer.Option(False, "--dll", help="Test DLL Queue implementation"),
-    sll: bool = typer.Option(False, "--sll", help="Test SLL Queue implementation"),
-    array: bool = typer.Option(
-        False, "--array", help="Test Array Queue implementation"
-    ),
+    initial_size: int = typer.Option(100, help="Initial size for doubling experiment"),
+    max_size: int = typer.Option(1000, help="Maximum size for doubling experiment"),
+    dll: bool = typer.Option(False, help="Test DLL implementation"),
+    sll: bool = typer.Option(False, help="Test SLL implementation"),
+    array: bool = typer.Option(False, help="Test Array implementation"),
 ):
     """Run doubling experiment on queue implementations."""
-    if initial_size <= 0 or max_size <= 0 or initial_size > max_size:
-        console.print("[red]Error: Invalid size parameters[/red]")
+    if not any([dll, sll, array]):
+        console.print("[yellow]Please specify at least one implementation to test[/yellow]")
         return
 
-    operations = ["enqueue", "dequeue", "peek", "concat", "iconcat"]
-    output_path = Path(output_dir)
+    sizes = []
+    current_size = initial_size
+    while current_size <= max_size:
+        sizes.append(current_size)
+        current_size *= 2
 
-    # Store results from all implementations
-    all_results = {}
+    for approach, queue_class in QUEUE_IMPLEMENTATIONS.items():
+        if (approach == QueueApproach.dll and dll) or \
+           (approach == QueueApproach.sll and sll) or \
+           (approach == QueueApproach.array and array):
+            try:
+                results = {
+                    "concat": [],
+                    "dequeue": [],
+                    "enqueue": [],
+                    "iconcat": [],
+                    "peek": []
+                }
 
-    for approach in get_selected_approaches(dll, sll, array):
-        queue_class = QUEUE_IMPLEMENTATIONS[approach]
-        impl_name = approach.name.upper()
+                for size in sizes:
+                    queue = queue_class()
+                    
+                    # Fill queue
+                    for i in range(size):
+                        queue.enqueue(i)
 
-        try:
-            results = run_doubling_experiment(
-                queue_class, initial_size, max_size, operations
-            )
-            console.print(Panel(create_doubling_table(results, impl_name)))
-            plot_path = plot_results(results, impl_name, output_path)
-            console.print(f"Plot saved to: {plot_path}")
+                    # Test each operation
+                    for operation in results.keys():
+                        func = get_operation_function(operation, queue, size)
+                        time_taken = time_operation(func)
+                        results[operation].append(time_taken)
 
-            # Store results for combined plotting
-            all_results[impl_name] = results
+                # Plot results
+                plot_results(results, sizes, f"{approach.value.upper()} Queue Doubling Experiment")
 
-        except Exception as e:
-            console.print(f"[red]Error testing {impl_name}: {str(e)}[/red]")
+                # Display results in table
+                table = Table(
+                    title=f"{approach.value.upper()} Queue Doubling Experiment Results",
+                    box=box.ROUNDED,
+                    show_header=True,
+                    header_style="bold magenta",
+                )
+                table.add_column("Size (n)", justify="right")
+                for operation in results.keys():
+                    table.add_column(operation, justify="right")
+
+                for i, size in enumerate(sizes):
+                    row = [f"{size:,}"]
+                    for operation in results.keys():
+                        row.append(f"{results[operation][i]:.6f}")
+                    table.add_row(*row)
+
+                console.print(Panel(table))
+
+            except Exception as e:
+                console.print(f"[red]Error testing {approach.value}: {str(e)}[/red]")
 
     # Create combined plots
-    if all_results:
-        plot_combined_results(all_results, output_path)
+    for operation in ["concat", "dequeue", "enqueue", "iconcat", "peek"]:
+        plt.figure(figsize=(10, 6))
+        for approach, queue_class in QUEUE_IMPLEMENTATIONS.items():
+            if (approach == QueueApproach.dll and dll) or \
+               (approach == QueueApproach.sll and sll) or \
+               (approach == QueueApproach.array and array):
+                queue = queue_class()
+                times = []
+                for size in sizes:
+                    # Fill queue
+                    for i in range(size):
+                        queue.enqueue(i)
+                    # Test operation
+                    func = get_operation_function(operation, queue, size)
+                    time_taken = time_operation(func)
+                    times.append(time_taken)
+                plt.plot(sizes, times, marker='o', label=approach.value.upper())
+
+        plt.title(f"Combined {operation} Operation")
+        plt.xlabel('Size (n)')
+        plt.ylabel('Time (ms)')
+        plt.grid(True)
+        plt.legend()
+        
+        # Save combined plot
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        plt.savefig(Path("results") / f"combined_{operation}_{timestamp}.png")
+        plt.close()
 
 
 if __name__ == "__main__":
