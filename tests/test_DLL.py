@@ -10,6 +10,7 @@ def test_list_init():
     lst = DoublyLinkedList()
     assert len(lst) == 0
 
+
 # Queue Tests
 def test_queue_init():
     """Test queue initialization."""

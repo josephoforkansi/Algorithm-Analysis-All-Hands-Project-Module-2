@@ -11,6 +11,7 @@ def test_list_init():
     assert len(lst) == 0
     assert lst.is_empty() == True
 
+
 # LinkedQueue Tests
 def test_queue_init():
     """Test queue initialization."""

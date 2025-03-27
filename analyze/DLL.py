@@ -2,15 +2,15 @@
 
 from typing import Any, Optional
 from dataclasses import dataclass
-from .timer import TimingResult
 
 
 @dataclass
 class Node:
     """Node class for doubly linked list."""
+
     value: Any
-    prev: Optional['Node'] = None
-    next: Optional['Node'] = None
+    prev: Optional["Node"] = None
+    next: Optional["Node"] = None
 
 
 class Queue:
@@ -21,10 +21,9 @@ class Queue:
         self.head: Optional[Node] = None
         self.tail: Optional[Node] = None
         self.size: int = 0
-        self.timing_result = TimingResult("DLL")
 
     def enqueue(self, value: Any) -> None:
-        """Add an element to the end of the queue."""
+        """Add an element to the end of the queue. O(1) operation."""
         new_node = Node(value)
         if self.is_empty():
             self.head = new_node
@@ -36,7 +35,7 @@ class Queue:
         self.size += 1
 
     def dequeue(self) -> Any:
-        """Remove and return the first element from the queue."""
+        """Remove and return the first element from the queue. O(1) operation."""
         if self.is_empty():
             raise IndexError("Queue is empty")
         value = self.head.value
@@ -49,7 +48,7 @@ class Queue:
         return value
 
     def peek(self) -> Any:
-        """Return the first element without removing it."""
+        """Return the first element without removing it. O(1) operation."""
         if self.is_empty():
             raise IndexError("Queue is empty")
         return self.head.value
@@ -62,23 +61,27 @@ class Queue:
         """Return the number of elements in the queue."""
         return self.size
 
-    def __add__(self, other: 'Queue') -> 'Queue':
-        """Concatenate two queues."""
+    def __add__(self, other: "Queue") -> "Queue":
+        """Concatenate two queues. O(1) operation."""
+        if self.is_empty():
+            return other
+        if other.is_empty():
+            return self
+
+        # O(1) concatenation by linking the queues
         result = Queue()
-        # Copy first queue
-        current = self.head
-        while current is not None:
-            result.enqueue(current.value)
-            current = current.next
-        # Copy second queue
-        current = other.head
-        while current is not None:
-            result.enqueue(current.value)
-            current = current.next
+        result.head = self.head
+        result.tail = other.tail
+        result.size = self.size + other.size
+
+        # Link the queues
+        self.tail.next = other.head
+        other.head.prev = self.tail
+
         return result
 
-    def __iadd__(self, other: 'Queue') -> 'Queue':
-        """Concatenate another queue to this queue."""
+    def __iadd__(self, other: "Queue") -> "Queue":
+        """Concatenate another queue to this queue. O(1) operation."""
         if self.is_empty():
             self.head = other.head
             self.tail = other.tail
