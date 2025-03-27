@@ -20,13 +20,13 @@ Each implementation is tested for efficiency in performing:
 
 - peek(): Returns the front element without removing it.
 
-- __add__(+): Merges two queues into a new queue.
+- add(+): Merges two queues into a new queue.
 
-- __iadd__(+=): Performs in-place merging of two queues.
+- iadd(+=): Performs in-place merging of two queues.
 
 ## 🚀 Project Overview
 
-This project benchmarks queue data structures to analyze their efficiency across basic operations. The implementation is structured within the analyze directory.
+This project benchmarks queue data structures to analyze their efficiency across basic operations. The implementation is structured within the analyze project.
 
 ## Queue Implementations
 
@@ -48,9 +48,9 @@ Each queue implementation includes methods for:
 
 - removeLast(): Removes and returns the last element of the queue.
 
-- __add__(other): Implements the + operation for merging two queues.
+- __add__: Implements the + operation for merging two queues.
 
-- __iadd__(other): Implements the += operation for in-place merging.
+- __iadd__: Implements the += operation for in-place merging.
 
 ## Supporting Tasks
 
@@ -64,17 +64,23 @@ Each queue implementation includes methods for:
 
 ## Running the Project
 
-1. Benchmark Performance
+To run the program
 
-Run main.py to execute performance benchmarking and unit tests:
+- `cd analyze && poetry install`
 
-- `python main.py`
+To run just the analyze
 
-2. Running Unit Tests Separately
+- `poetry run analyze analyze`
 
-To run only the unit tests:
+To run doubling experiment
 
-- `python -m unittest test_cases.py`
+- `poetry run analyze doubling`
+
+You can also run the commands below for a more detailed approach:
+
+- `poetry run analyze --help`
+- `poetry run analyze analyze --help`
+- `poetry run analyze doubling --help`
 
 ## Results & Findings
 
