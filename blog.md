@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Data structures play a critical role in efficient software development, influencing performance, scalability, and system responsiveness. Among them, queues are fundamental, powering applications such as task scheduling, messaging systems, and real-time data processing. In this project, our team explored three key queue implementations—Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue analyzing their performance through benchmarking experiments using SystemSense.
+Data structures play a critical role in efficient software development, influencing performance, scalability, and system responsiveness. Among them, queues are fundamental, powering applications such as task scheduling, messaging systems, and real-time data processing. In this project, our team explored three key queue implementations—Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue. This project seeks to answer our research question: What are the performance differences between SLL queue, DLL queue, and array-based queue implementations when executing basic operations (addfirst, addlast, removefirst, removelast, add (+), and iadd (+=)?. We analyzed their performance through benchmarking experiments using SystemSense.
 
 As algorithm engineers tackling this project we considered multiple aspects, including:
 
@@ -16,7 +16,7 @@ As algorithm engineers tackling this project we considered multiple aspects, inc
 
 - Benchmarking Methodology: Designing experiments to measure execution times, analyze scaling behavior, and compare performance under different workloads.
 
-Through this project, we aim to provide insights into the efficiency of these queue implementations and guide the selection of an optimal data structure based on application requirements. By profiling and analyzing queue operations, we not only enhance our understanding of core data structures but also develop practical skills in performance analysis, a crucial skill in software engineering and systems design.
+Through this project, we aim to provide insights into the efficiency of these queue implementations and guide the selection of an optimal data structure based on application requirements. By profiling and analyzing queue operations, we not only enhance our understanding of core data structures but also develop practical skills in performance analysis, a crucial skill in algorithm engineering and systems design.
 
 ### Motivation
 
