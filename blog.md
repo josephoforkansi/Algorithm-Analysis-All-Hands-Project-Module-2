@@ -3,6 +3,7 @@
 ## Introduction
 
 Data structures play a critical role in efficient software development, influencing performance, scalability, and system responsiveness. Among them, queues are fundamental, powering applications such as task scheduling, messaging systems, and real-time data processing. In this project, our team explored three key queue implementations—Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue analyzing their performance through benchmarking experiments using SystemSense.
+
 As algorithm engineers tackling this project we considered multiple aspects, including:
 
 - Algorithmic Complexity: Understanding the time and space complexity of queue operations to determine trade-offs between different implementations.
