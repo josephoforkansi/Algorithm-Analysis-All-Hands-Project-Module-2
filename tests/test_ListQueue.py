@@ -8,7 +8,7 @@ def test_init():
     """Test queue initialization."""
     queue = ListQueueDisplay()
     assert len(queue) == 0
-    assert queue.is_empty() == True
+    assert queue.is_empty() is True
 
 
 def test_enqueue():
@@ -16,7 +16,7 @@ def test_enqueue():
     queue = ListQueueDisplay()
     queue.enqueue(1)
     assert len(queue) == 1
-    assert queue.is_empty() == False
+    assert queue.is_empty() is False
 
 
 def test_dequeue():
@@ -27,7 +27,7 @@ def test_dequeue():
     assert queue.dequeue() == 1
     assert len(queue) == 1
     assert queue.dequeue() == 2
-    assert queue.is_empty() == True
+    assert queue.is_empty() is True
 
 
 def test_peek():
@@ -54,7 +54,7 @@ def test_multiple_operations():
     assert len(queue) == 2
     assert queue.dequeue() == 3
     assert queue.dequeue() == 4
-    assert queue.is_empty() == True
+    assert queue.is_empty() is True
 
 
 def test_empty_queue_operations():
@@ -65,4 +65,40 @@ def test_empty_queue_operations():
     with pytest.raises(IndexError):
         queue.dequeue()
     assert len(queue) == 0
-    assert queue.is_empty() == True
+    assert queue.is_empty() is True
+
+
+def test_queue_add():
+    """Test the addition of two queues."""
+    queue1 = ListQueueDisplay()
+    queue2 = ListQueueDisplay()
+    queue1.enqueue(1)
+    queue1.enqueue(2)
+    queue2.enqueue(3)
+    queue2.enqueue(4)
+    
+    concatenated_queue = queue1 + queue2
+    assert len(concatenated_queue) == 4
+    assert concatenated_queue.dequeue() == 1
+    assert concatenated_queue.dequeue() == 2
+    assert concatenated_queue.dequeue() == 3
+    assert concatenated_queue.dequeue() == 4
+    assert concatenated_queue.is_empty() is True
+
+
+def test_queue_iadd():
+    """Test in-place addition of two queues."""
+    queue1 = ListQueueDisplay()
+    queue2 = ListQueueDisplay()
+    queue1.enqueue(1)
+    queue1.enqueue(2)
+    queue2.enqueue(3)
+    queue2.enqueue(4)
+    
+    queue1 += queue2
+    assert len(queue1) == 4
+    assert queue1.dequeue() == 1
+    assert queue1.dequeue() == 2
+    assert queue1.dequeue() == 3
+    assert queue1.dequeue() == 4
+    assert queue1.is_empty() is True
