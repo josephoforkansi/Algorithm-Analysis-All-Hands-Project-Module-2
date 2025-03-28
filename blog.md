@@ -638,10 +638,16 @@ ARRAY Queue Implementation
 ```
 
 
-### Replace with name
-
-#### Run of systemsense
-
-#### Run of Doubling Experiment
-
 #### Run of Performance Analysis
+
+I am going to talk about the performance analysis of the three queue implementations: SLL, DLL, and Array when running operations like removeFirst, removeLast, addFirst, addLast, peek, dequeue, enqueue, and concat.
+
+First, I want to explain the performance analysis of the SLL queue implementation. The SLL stores a list of elements and accesses the elements in a linear way, so the time complexity of the SLL queue implementation is O(n) for most operations. The SLL has one exception: thanks to its head pointer, the addFirst operation is O(1). For example, in the doubling experiment, the addFirst operation for the SLL took only 0.0065 ms for 1 element, while addLast took 1.0246 ms for 1,000 elements because it requires traversing the list.
+
+The DLL queue implementation stores a list of elements as well, but it accesses the elements in a bidirectional way. This means the time complexity of the DLL for operations with the first and last items, such as addFirst and addLast, is O(1) due to the head and tail pointers. For instance, in the doubling experiment, the addLast operation for the DLL took 0.00353 ms for 100 elements and remained efficient even as the input size increased, taking only 0.0051 ms for 6,400 elements.
+
+What is a head and tail pointer?
+
+These are pointers that reference the first and last elements of the linked list. When removing or adding elements at these positions, the list does not need to shift its elements. Instead, the pointers are updated to reference the next or previous node. In the SLL, there is only a head pointer, while in the DLL, there are both head and tail pointers.
+
+The Array-based Queue implementation uses a list of elements where the time complexity for accessing the first and last elements is O(1). However, adding or removing elements is only O(1) if the operation is at the end of the list. If the operation is at the beginning or in the middle, it becomes O(n) because all the elements need to shift to make space or fill the gap. For example, in the doubling experiment, the addFirst operation for the Array-based Queue took 0.00208 ms for 100 elements but increased to 0.00444 ms for 6,400 elements due to the shifting required.
