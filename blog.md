@@ -2,6 +2,22 @@
 
 ## Introduction
 
+Data structures play a critical role in efficient software development, influencing performance, scalability, and system responsiveness. Among them, queues are fundamental, powering applications such as task scheduling, messaging systems, and real-time data processing. In this project, our team explored three key queue implementations—Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue analyzing their performance through benchmarking experiments using SystemSense.
+
+As algorithm engineers tackling this project we considered multiple aspects, including:
+
+- Algorithmic Complexity: Understanding the time and space complexity of queue operations to determine trade-offs between different implementations.
+
+- Memory Management: Evaluating how memory allocation and deallocation affect performance, particularly in linked list-based vs. array-based implementations.
+
+- Concurrency Considerations: Investigating how these data structures behave in multi-threaded environments where multiple processes access and modify queues simultaneously.
+
+- Use Case Optimization: Identifying practical applications where each queue implementation excels, such as high-throughput systems, real-time event processing, and low-latency applications.
+
+- Benchmarking Methodology: Designing experiments to measure execution times, analyze scaling behavior, and compare performance under different workloads.
+
+Through this project, we aim to provide insights into the efficiency of these queue implementations and guide the selection of an optimal data structure based on application requirements. By profiling and analyzing queue operations, we not only enhance our understanding of core data structures but also develop practical skills in performance analysis, a crucial skill in software engineering and systems design.
+
 ### Motivation
 
 Efficient data structures are essential in software development, especially when dealing with queues in real-world applications such as scheduling systems, task management, and networking. Different queue implementations like Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue offer trade-offs in terms of performance. Our project aims to benchmark these tradeoffs and analyze the data by comparing the execution times of the queue operations.
@@ -488,14 +504,138 @@ ARRAY Queue Implementation
 
 ```
 
-### Replace with name
+### Joseph Oforkansi
 
 #### Run of systemsense
 
+```wsl
+
+╭───────────────────────────────────  Displaying System Panel Information ────────────────────────────────────╮
+│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓              │
+│ ┃ System Parameter ┃ Parameter Value                                                         ┃              │
+│ ┣━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫              │
+│ ┃ battery          ┃ 75.48% battery life remaining, 5:10:37 seconds remaining                ┃              │
+│ ┃ cpu              ┃ x86_64                                                                  ┃              │
+│ ┃ cpucores         ┃ Physical cores: 6, Logical cores: 12                                    ┃              │
+│ ┃ cpufrequencies   ┃ Min: 0.0 Mhz, Max: 0.0 Mhz                                              ┃              │
+│ ┃ datetime         ┃ 2025-03-27 18:57:18                                                     ┃              │
+│ ┃ disk             ┃ Total: 1006.85 GB, Used: 4.94 GB, Free: 950.70 GB                       ┃              │
+│ ┃ hostname         ┃ Ubasinachi                                                              ┃              │
+│ ┃ memory           ┃ Total: 3.55 GB, Available: 2.98 GB, Used: 0.41 GB                       ┃              │
+│ ┃ platform         ┃ Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39          ┃              │
+│ ┃ pythonversion    ┃ 3.12.3                                                                  ┃              │
+│ ┃ runningprocesses ┃ 30                                                                      ┃              │
+│ ┃ swap             ┃ Total: 1.00 GB, Used: 0.00 GB, Free: 1.00 GB                            ┃              │
+│ ┃ system           ┃ Linux                                                                   ┃              │
+│ ┃ systemload       ┃ (0.080078125, 0.0166015625, 0.00537109375)                              ┃              │
+│ ┃ virtualenv       ┃ /home/oforkansi/.cache/pypoetry/virtualenvs/systemsense-Rt5TvRuf-py3.12 ┃              │
+│ ┗━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛              │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+Displaying Benchmark Results
+
+╭──────────────────────────────────  Displaying Benchmark Panel Information ───────────────────────────────────╮
+│ ┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓                          │
+│ ┃ Benchmark Name ┃ Benchmark Results (sec)                                        ┃                          │
+│ ┣━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫                          │
+│ ┃ addition       ┃ [0.30994871300026716, 0.3031263940010831, 0.2990487799997936]  ┃                          │
+│ ┃ concatenation  ┃ [1.2810950929997489, 1.2850497609997547, 1.286635368000134]    ┃                          │
+│ ┃ exponentiation ┃ [3.754274965998775, 3.0718883919998916, 2.6503667079996376]    ┃                          │
+│ ┃ multiplication ┃ [0.4695458829992276, 0.486672508999618, 0.49345105300017167]   ┃                          │
+│ ┃ rangelist      ┃ [0.2001605319983355, 0.22825112600003195, 0.20067403100074444] ┃                          │
+│ ┗━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                          │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
 #### Run of Doubling Experiment
+
+```wsl
+DLL Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                DLL Queue Doubling Experiment Results                                                          │
+│ ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮                                           │
+│ │ Size (n) │  enqueue │  dequeue │     peek │   concat │  iconcat │                                           │
+│ ├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┤                                           │
+│ │      100 │ 0.087222 │ 0.021317 │ 0.006859 │ 0.002442 │ 0.001520 │                                           │
+│ │      200 │ 0.262785 │ 0.040008 │ 0.010311 │ 0.001498 │ 0.000608 │                                           │
+│ │      400 │ 0.404700 │ 0.057016 │ 0.016227 │ 0.001150 │ 0.000521 │                                           │
+│ │      800 │ 0.527459 │ 0.136185 │ 0.030955 │ 0.001075 │ 0.000532 │                                           │
+│ ╰──────────┴──────────┴──────────┴──────────┴──────────┴──────────╯                                           │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+SLL Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                 SLL Queue Doubling Experiment Results                                                         │
+│ ╭──────────┬───────────┬──────────┬──────────┬───────────┬──────────╮                                         │
+│ │ Size (n) │   enqueue │  dequeue │     peek │    concat │  iconcat │                                         │
+│ ├──────────┼───────────┼──────────┼──────────┼───────────┼──────────┤                                         │
+│ │      100 │  0.922978 │ 0.011722 │ 0.005210 │  0.766127 │ 0.022109 │                                         │
+│ │      200 │  5.784086 │ 0.023260 │ 0.008705 │  3.659239 │ 0.029491 │                                         │
+│ │      400 │ 19.014342 │ 0.047735 │ 0.016606 │ 11.799462 │ 0.067425 │                                         │
+│ │      800 │ 73.931131 │ 0.099618 │ 0.031172 │ 50.246523 │ 0.123659 │                                         │
+│ ╰──────────┴───────────┴──────────┴──────────┴───────────┴──────────╯                                         │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+ARRAY Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│               ARRAY Queue Doubling Experiment Results                                                         │
+│ ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮                                           │
+│ │ Size (n) │  enqueue │  dequeue │     peek │   concat │  iconcat │                                           │
+│ ├──────────┼──────────┼──────────┼──────────┼──────────┼──────────┤                                           │
+│ │      100 │ 0.016671 │ 0.017149 │ 0.009736 │ 0.005112 │ 0.001335 │                                           │
+│ │      200 │ 0.026864 │ 0.038575 │ 0.016454 │ 0.003440 │ 0.001649 │                                           │
+│ │      400 │ 0.050536 │ 0.085062 │ 0.031683 │ 0.004689 │ 0.001899 │                                           │
+│ │      800 │ 0.102516 │ 0.164492 │ 0.057786 │ 0.003637 │ 0.002127 │                                           │
+│ ╰──────────┴──────────┴──────────┴──────────┴──────────┴──────────╯                                           │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 #### Run of Performance Analysis
 
+```wsl
+DLL Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│              DLL Queue Performance Analysis                                                                   │
+│ ╭───────────┬───────────┬──────────┬───────────────────╮                                                      │
+│ │ Operation │ Time (ms) │ Elements │ Time/Element (ms) │                                                      │
+│ ├───────────┼───────────┼──────────┼───────────────────┤                                                      │
+│ │ enqueue   │  1.124524 │    1,000 │          0.001125 │                                                      │
+│ │ dequeue   │  0.149535 │      500 │          0.000299 │                                                      │
+│ │ peek      │  0.042612 │      333 │          0.000128 │                                                      │
+│ │ concat    │  0.002485 │      100 │          0.000025 │                                                      │
+│ │ iconcat   │  0.001509 │      100 │          0.000015 │                                                      │
+│ ╰───────────┴───────────┴──────────┴───────────────────╯                                                      │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+SLL Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│              SLL Queue Performance Analysis                                                                   │
+│ ╭───────────┬────────────┬──────────┬───────────────────╮                                                     │
+│ │ Operation │  Time (ms) │ Elements │ Time/Element (ms) │                                                     │
+│ ├───────────┼────────────┼──────────┼───────────────────┤                                                     │
+│ │ enqueue   │ 113.067651 │    1,000 │          0.113068 │                                                     │
+│ │ dequeue   │   0.121727 │      500 │          0.000243 │                                                     │
+│ │ peek      │   0.040225 │      333 │          0.000121 │                                                     │
+│ │ concat    │  84.056319 │      100 │          0.840563 │                                                     │
+│ │ iconcat   │   0.140744 │      100 │          0.001407 │                                                     │
+│ ╰───────────┴────────────┴──────────┴───────────────────╯                                                     │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+ARRAY Queue Implementation
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│             ARRAY Queue Performance Analysis                                                                  │
+│ ╭───────────┬───────────┬──────────┬───────────────────╮                                                      │
+│ │ Operation │ Time (ms) │ Elements │ Time/Element (ms) │                                                      │
+│ ├───────────┼───────────┼──────────┼───────────────────┤                                                      │
+│ │ enqueue   │  0.106565 │    1,000 │          0.000107 │                                                      │
+│ │ dequeue   │  0.291717 │      500 │          0.000583 │                                                      │
+│ │ peek      │  0.048636 │      333 │          0.000146 │                                                      │
+│ │ concat    │  0.006046 │      100 │          0.000060 │                                                      │
+│ │ iconcat   │  0.002800 │      100 │          0.000028 │                                                      │
+│ ╰───────────┴───────────┴──────────┴───────────────────╯                                                      │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 
 ### Replace with name
