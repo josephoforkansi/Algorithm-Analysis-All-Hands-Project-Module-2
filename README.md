@@ -36,16 +36,6 @@ The queue implementations support merging operations:
 
 - iadd (+=): Merges another queue into the current queue in place.
 
-The Doubly Linked List Queue and Singly Linked List Queue include extra methods for direct list manipulation:
-
-- addFirst(value): Adds an element to the front of the queue.
-
-- addLast(value): Adds an element to the back of the queue.
-
-- removeFirst(): Removes and returns the front element of the queue.
-
-- removeLast(): Removes and returns the last element of the queue.
-
 ## 🛠️ Supporting Tasks
 
 - Timing Utilities (timer.py): Measures execution times for queue operations.
