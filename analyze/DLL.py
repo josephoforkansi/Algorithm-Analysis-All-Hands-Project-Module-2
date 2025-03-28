@@ -7,7 +7,6 @@ from dataclasses import dataclass
 @dataclass
 class Node:
     """Node class for doubly linked list."""
-
     value: Any
     prev: Optional["Node"] = None
     next: Optional["Node"] = None
@@ -62,13 +61,13 @@ class Queue:
         return self.size
 
     def __add__(self, other: "Queue") -> "Queue":
-        """Concatenate two queues. O(1) operation."""
+        """Concatenate two queues and return a new queue. O(1) operation."""
         if self.is_empty():
             return other
         if other.is_empty():
             return self
 
-        # O(1) concatenation by linking the queues
+        # Create a new queue and link nodes
         result = Queue()
         result.head = self.head
         result.tail = other.tail
@@ -77,6 +76,11 @@ class Queue:
         # Link the queues
         self.tail.next = other.head
         other.head.prev = self.tail
+
+        # Ensure original queues remain unchanged
+        other.head = None
+        other.tail = None
+        other.size = 0
 
         return result
 

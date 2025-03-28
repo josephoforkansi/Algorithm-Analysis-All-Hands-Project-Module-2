@@ -1,25 +1,25 @@
 """Basic Array-based Queue implementation."""
 
-from typing import Any, List
+from typing import Any, Deque
+from collections import deque
 
 
 class ListQueueDisplay:
-    """Basic Array-based Queue implementation using Python's list."""
+    """Basic Array-based Queue implementation using Python's deque."""
 
     def __init__(self):
         """Initialize an empty queue."""
-        self.items: List[Any] = []
+        self.items: Deque[Any] = deque()
 
     def enqueue(self, value: Any) -> None:
         """Add an element to the end of the queue. O(1) operation."""
         self.items.append(value)
 
     def dequeue(self) -> Any:
-        """Remove and return the first element from the queue. O(n) operation."""
+        """Remove and return the first element from the queue. O(1) operation."""
         if self.is_empty():
             raise IndexError("Queue is empty")
-        # This is explicitly O(n) as it shifts all elements
-        return self.items.pop(0)
+        return self.items.popleft()
 
     def peek(self) -> Any:
         """Return the first element without removing it. O(1) operation."""
@@ -38,14 +38,11 @@ class ListQueueDisplay:
     def __add__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
         """Concatenate two queues. O(n) operation."""
         result = ListQueueDisplay()
-        # Explicitly create a new list requiring O(n) copy operations
-        result.items = list(self.items)  # Copy first
-        result.items.extend(other.items)  # Then extend
+        result.items = deque(self.items)  # Copy first queue
+        result.items.extend(other.items)  # Append second queue
         return result
 
     def __iadd__(self, other: "ListQueueDisplay") -> "ListQueueDisplay":
         """Concatenate another queue to this queue. O(n) operation."""
-        # Explicitly O(n) operation to copy all elements from other
-        for item in other.items:
-            self.items.append(item)
+        self.items.extend(other.items)
         return self
