@@ -2,6 +2,21 @@
 
 ## Introduction
 
+Data structures play a critical role in efficient software development, influencing performance, scalability, and system responsiveness. Among them, queues are fundamental, powering applications such as task scheduling, messaging systems, and real-time data processing. In this project, our team explored three key queue implementations—Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue analyzing their performance through benchmarking experiments using SystemSense.
+As algorithm engineers tackling this project we considered multiple aspects, including:
+
+- Algorithmic Complexity: Understanding the time and space complexity of queue operations to determine trade-offs between different implementations.
+
+- Memory Management: Evaluating how memory allocation and deallocation affect performance, particularly in linked list-based vs. array-based implementations.
+
+- Concurrency Considerations: Investigating how these data structures behave in multi-threaded environments where multiple processes access and modify queues simultaneously.
+
+- Use Case Optimization: Identifying practical applications where each queue implementation excels, such as high-throughput systems, real-time event processing, and low-latency applications.
+
+- Benchmarking Methodology: Designing experiments to measure execution times, analyze scaling behavior, and compare performance under different workloads.
+
+Through this project, we aim to provide insights into the efficiency of these queue implementations and guide the selection of an optimal data structure based on application requirements. By profiling and analyzing queue operations, we not only enhance our understanding of core data structures but also develop practical skills in performance analysis, a crucial skill in software engineering and systems design.
+
 ### Motivation
 
 Efficient data structures are essential in software development, especially when dealing with queues in real-world applications such as scheduling systems, task management, and networking. Different queue implementations like Singly Linked List (SLL), Doubly Linked List (DLL), and Array-based Queue offer trade-offs in terms of performance. Our project aims to benchmark these tradeoffs and analyze the data by comparing the execution times of the queue operations.
