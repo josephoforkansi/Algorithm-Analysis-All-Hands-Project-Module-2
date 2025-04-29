@@ -240,9 +240,9 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
-                width=85  # Adjust table width now that 'removelast' is gone
+                width=73  # Adjusted table width
             )
-            table.add_column("Size (n)", justify="right", width=12)
+            table.add_column("Size (n)", justify="right", width=10)
             table.add_column("enqueue (ms)", justify="right", width=12)
             table.add_column("dequeue (ms)", justify="right", width=12)
             table.add_column("peek (ms)", justify="right", width=12)
