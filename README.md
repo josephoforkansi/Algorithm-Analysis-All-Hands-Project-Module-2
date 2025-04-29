@@ -10,8 +10,8 @@ This project benchmarks queue data structures to analyze their efficiency across
 
 ➡️➡️➡️ Queue Implementations
 
-* Singly Linked List (SLL) Queue - Implemented in `analyze/sll_quque.py` (Class: `BasicSLLQueue`)
-* Doubly Linked List (DLL) Queue - Implemented in `analyze/dll_queque.py` (Class: `Queue`)
+* Singly Linked List (SLL) Queue - Implemented in `analyze/sll_queue.py` (Class: `BasicSLLQueue`)
+* Doubly Linked List (DLL) Queue - Implemented in `analyze/dll_queue.py` (Class: `BasicDLLQueue`)
 * Array-based Queue - Implemented in `analyze/ArrayQueue.py` (Class: `ArrayQueue`)
 
 🔧 Basic Operations Implemented
