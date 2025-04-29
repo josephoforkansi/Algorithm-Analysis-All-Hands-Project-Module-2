@@ -55,8 +55,7 @@ def time_operation(func):
         func()
         elapsed = perf_counter() - start_time
         return elapsed
-    except Exception as e:
-        console.print(f"[red]Error during operation: {str(e)}[/red]")
+    except Exception:
         return float("nan")
 
 
@@ -240,7 +239,7 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
-                width=73  # Adjusted table width
+                width=73
             )
             table.add_column("Size (n)", justify="right", width=10)
             table.add_column("enqueue (ms)", justify="right", width=12)
@@ -253,10 +252,10 @@ def doubling(
                 row = [f"{size:,}"]
                 for operation in results.keys():
                     value = results[operation][i]
-                    if np.isnan(value):  # Check for NaN
+                    if np.isnan(value):
                         row.append("N/A")
                     else:
-                        row.append(f"{value * 1000:.5f}")  # Show 5 decimal places
+                        row.append(f"{value * 1000:.5f}")
                 table.add_row(*row)
 
             console.print(Panel(table))
@@ -277,29 +276,25 @@ def plot_results(sizes, all_results, results_dir, operations):
 
     # Create log-log plots for each operation
     for operation in operations:
-        if len(sizes) > 2:  # Only create log plots if we have enough data points
+        if len(sizes) > 2:
             plt.figure(figsize=(10, 6))
 
             for impl, results in all_results.items():
-                times = np.array(results[operation]) * 1000  # Convert to milliseconds
-                if np.all(times > 0) and not np.all(np.isnan(times)):  # Avoid log(0) and all NaNs
+                times = np.array(results[operation]) * 1000
+                if np.all(times > 0) and not np.all(np.isnan(times)):
                     plt.loglog(
                         sizes, times, marker="o", label=f"{impl.upper()}", linewidth=2
                     )
 
-            # Add reference lines for O(1), O(n), O(n²) - only if there's valid data
             valid_data_exists = any(
                 not np.all(np.isnan(results[operation])) for results in all_results.values()
             )
             if valid_data_exists and len(sizes) > 1:
                 x_range = np.array(sizes)
-                # Add O(1) reference (using the first valid time point)
                 first_valid_time = next((res[operation][0] * 1000 for res in all_results.values() if not np.isnan(res[operation][0])), None)
                 if first_valid_time is not None:
                     plt.loglog(x_range, np.ones_like(x_range) * first_valid_time, "--", label="O(1)", alpha=0.5)
-                    # Add O(n) reference - scale to fit
                     plt.loglog(x_range, x_range * (first_valid_time / x_range[0]), "--", label="O(n)", alpha=0.5)
-                    # Add O(n²) reference - scale to fit
                     plt.loglog(x_range, np.power(x_range, 2) * (first_valid_time / np.power(x_range[0], 2)), "--", label="O(n²)", alpha=0.5)
 
 
@@ -312,17 +307,15 @@ def plot_results(sizes, all_results, results_dir, operations):
             plt.legend(fontsize=12)
             plt.tight_layout()
 
-            # Save log-log plot
             log_plot_path = results_dir / f"{operation}_loglog_plot.png"
             plt.savefig(log_plot_path)
             plt.close()
 
-    # Create regular performance plots for each implementation
     for impl, results in all_results.items():
         plt.figure(figsize=(10, 6))
 
         for operation in operations:
-            times = np.array(results[operation]) * 1000  # Convert to milliseconds
+            times = np.array(results[operation]) * 1000
             plt.plot(sizes, times, marker="o", label=operation, linewidth=2)
 
         plt.title(f"{impl.upper()} Queue Implementation Performance", fontsize=16)
@@ -332,7 +325,6 @@ def plot_results(sizes, all_results, results_dir, operations):
         plt.legend(fontsize=12)
         plt.tight_layout()
 
-        # Save plot
         plot_path = results_dir / f"{impl}_performance.png"
         plt.savefig(plot_path)
         plt.close()
