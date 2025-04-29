@@ -27,6 +27,12 @@ class ListQueueDisplay:
             raise IndexError("Queue is empty")
         return self.items[0]
 
+    def removelast(self) -> Any:
+        """Remove and return the last element from the queue. O(1) operation."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.items.pop()  # O(1) operation using Python's deque
+
     def is_empty(self) -> bool:
         """Check if the queue is empty."""
         return len(self.items) == 0

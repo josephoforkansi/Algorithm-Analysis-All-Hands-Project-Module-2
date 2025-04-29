@@ -52,6 +52,22 @@ class Queue:
             raise IndexError("Queue is empty")
         return self.head.value
 
+    def removelast(self) -> Any:
+        """Remove and return the last element from the queue. O(1) operation."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        
+        value = self.tail.value
+        if self.head == self.tail:  # Only one element
+            self.head = None
+            self.tail = None
+        else:
+            self.tail = self.tail.prev
+            self.tail.next = None
+        
+        self.size -= 1
+        return value
+
     def is_empty(self) -> bool:
         """Check if the queue is empty."""
         return self.size == 0

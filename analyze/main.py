@@ -155,8 +155,8 @@ def analyze(
 
 @app.command()
 def doubling(
-    initial_size: int = typer.Option(100, help="Initial size for doubling experiment"),
-    max_size: int = typer.Option(1000, help="Maximum size for doubling experiment"),
+    initial_size: int = typer.Option(10000, help="Initial size for doubling experiment"),
+    max_size: int = typer.Option(1000000, help="Maximum size for doubling experiment"),
     dll: bool = typer.Option(True, help="Test DLL implementation"),
     sll: bool = typer.Option(True, help="Test SLL implementation"),
     array: bool = typer.Option(True, help="Test Array implementation"),
@@ -191,10 +191,12 @@ def doubling(
                 "peek": [],
                 "concat": [],
                 "iconcat": [],
+                "removelast": [],
             }
 
             for size in sizes:
                 queue = queue_class()
+                other = queue_class()
 
                 # Enqueue
                 enqueue_time = time_operation(
@@ -218,17 +220,23 @@ def doubling(
                 )
                 results["peek"].append(peek_time)
 
-                # Concat
-                other = queue_class()
+                # Prepare other queue for concat
                 for i in range(size // 10):
                     other.enqueue(i)
 
+                # Concat
                 concat_time = time_operation(lambda: queue + other)
                 results["concat"].append(concat_time)
 
                 # Iconcat
                 iconcat_time = time_operation(lambda: queue.__iadd__(other))
                 results["iconcat"].append(iconcat_time)
+
+                # Removelast - test with fixed number of operations (100)
+                removelast_time = time_operation(
+                    lambda: [queue.removelast() for _ in range(100)]
+                )
+                results["removelast"].append(removelast_time)
 
             # Store results for plotting
             all_results[approach.value] = results
@@ -239,10 +247,15 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
+                width=100  # Increase total table width
             )
-            table.add_column("Size (n)", justify="right")
-            for operation in results.keys():
-                table.add_column(operation, justify="right")
+            table.add_column("Size (n)", justify="right", width=12)
+            table.add_column("enqueue (ms)", justify="right", width=15)
+            table.add_column("dequeue (ms)", justify="right", width=15)
+            table.add_column("peek (ms)", justify="right", width=15)
+            table.add_column("concat (ms)", justify="right", width=15)
+            table.add_column("iconcat (ms)", justify="right", width=15)
+            table.add_column("removelast (ms)", justify="right", width=15)
 
             for i, size in enumerate(sizes):
                 row = [f"{size:,}"]
@@ -251,7 +264,7 @@ def doubling(
                     if np.isnan(value):  # Check for NaN
                         row.append("N/A")
                     else:
-                        row.append(f"{value * 1000:.6f}")  # Convert to milliseconds
+                        row.append(f"{value * 1000:.5f}")  # Show 5 decimal places
                 table.add_row(*row)
 
             console.print(Panel(table))

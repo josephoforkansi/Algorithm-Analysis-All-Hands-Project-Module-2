@@ -51,6 +51,27 @@ class BasicSLLQueue:
             raise IndexError("Queue is empty")
         return self.head.value
 
+    def removelast(self) -> Any:
+        """Remove and return the last element from the queue. O(n) operation."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        
+        if self.head == self.tail:  # Only one element
+            value = self.head.value
+            self.head = None
+            self.tail = None
+        else:
+            # Traverse to find second-to-last node
+            current = self.head
+            while current.next != self.tail:
+                current = current.next
+            value = self.tail.value
+            current.next = None
+            self.tail = current
+        
+        self.size -= 1
+        return value
+
     def __add__(self, other: "BasicSLLQueue") -> "BasicSLLQueue":
         """Concatenate two queues. O(1) operation using tail pointer."""
         if self.is_empty():
