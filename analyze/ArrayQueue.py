@@ -43,17 +43,6 @@ class ArrayQueue:
         """Check if the queue is empty."""
         return self.count == 0
 
-    def removelast(self) -> Any:
-        """Remove and return the last element from the queue. O(1)."""
-        if self.is_empty():
-            raise IndexError("removelast from empty queue")
-        last_index = (self.rear - 1 + self.capacity) % self.capacity
-        value = self.items[last_index]
-        self.items[last_index] = None
-        self.rear = last_index
-        self.count -= 1
-        return value
-
     def _resize(self, new_capacity: int) -> None:
         """Resize the underlying array."""
         temp = [None] * new_capacity

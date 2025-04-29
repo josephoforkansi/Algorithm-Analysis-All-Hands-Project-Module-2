@@ -2,8 +2,6 @@
 
 import functools
 import time
-from typing import Dict, Any
-
 
 class TimingResult:
     """Store timing results for a data structure's operations."""

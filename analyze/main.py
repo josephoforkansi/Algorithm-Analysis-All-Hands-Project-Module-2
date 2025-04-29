@@ -1,6 +1,5 @@
 """"Main module for queue implementations."""
 
-from typing import Type, Any, Dict, List
 from enum import Enum
 import typer
 from rich.console import Console
@@ -8,13 +7,13 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 from time import perf_counter
-import os
+import os  # noqa: F401
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-from analyze.dll_queque import Queue as DLLQueue
-from analyze.sll_queque import BasicSLLQueue as SLLQueue
+from analyze.dll_queue import BasicDLLQueue as DLLQueue
+from analyze.sll_queue import BasicSLLQueue as SLLQueue
 from analyze.ArrayQueue import ArrayQueue
 
 
@@ -105,13 +104,6 @@ def analyze_queue(queue_class, size=1000):
         iconcat_time = time_operation(lambda: queue.__iadd__(other))
         operations.append(("iconcat", iconcat_time, size // 10))
 
-        # Test removelast
-        removelast_count = size // 4
-        removelast_time = time_operation(
-            lambda: [queue.removelast() for _ in range(removelast_count) if queue.size() > 0]
-        )
-        operations.append(("removelast", removelast_time, removelast_count))
-
         # Display results in table
         table = Table(
             title=f"{approach.value.upper()} Queue Performance Analysis",
@@ -197,7 +189,6 @@ def doubling(
                 "peek": [],
                 "concat": [],
                 "iconcat": [],
-                "removelast": [],
             }
 
             for size in sizes:
@@ -238,12 +229,6 @@ def doubling(
                 iconcat_time = time_operation(lambda: queue.__iadd__(other))
                 results["iconcat"].append(iconcat_time)
 
-                # Removelast
-                removelast_time = time_operation(
-                    lambda: [queue.removelast() for _ in range(size // 4) if queue.size() > 0]
-                )
-                results["removelast"].append(removelast_time)
-
             # Store results for plotting
             all_results[approach.value] = results
 
@@ -253,7 +238,7 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
-                width=85
+                width=73  # Adjusted width to fit operations
             )
             table.add_column("Size (n)", justify="right", width=10)
             table.add_column("enqueue (ms)", justify="right", width=12)
@@ -261,7 +246,6 @@ def doubling(
             table.add_column("peek (ms)", justify="right", width=12)
             table.add_column("concat (ms)", justify="right", width=12)
             table.add_column("iconcat (ms)", justify="right", width=12)
-            table.add_column("removelast (ms)", justify="right", width=14)
 
             for i, size in enumerate(sizes):
                 row = [f"{size:,}"]
@@ -282,7 +266,7 @@ def doubling(
             console.print(traceback.format_exc())
 
     # Generate and save plots
-    plot_results(sizes, all_results, results_dir, operations=["enqueue", "dequeue", "peek", "concat", "iconcat", "removelast"])
+    plot_results(sizes, all_results, results_dir, operations=["enqueue", "dequeue", "peek", "concat", "iconcat"])
     console.print(f"[green]Plots saved to [bold]{results_dir}[/bold] directory[/green]")
 
 

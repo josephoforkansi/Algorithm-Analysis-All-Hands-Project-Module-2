@@ -9,7 +9,7 @@ class Node:
         self.prev: Optional['Node'] = None
         self.next: Optional['Node'] = None
 
-class DLLQueue:
+class BasicDLLQueue:
     """A Doubly Linked List implementation of a Queue (FIFO)."""
     def __init__(self):
         self._head: Optional[Node] = None
@@ -49,31 +49,32 @@ class DLLQueue:
     def __len__(self) -> int:
         return self._size
 
-    def iconcat(self, other: 'DLLQueue') -> None:
-        if other.is_empty():
-            return
-        if self.is_empty():
-            self._head = other._head
-            self._tail = other._tail
-        else:
-            self._tail.next = other._head
-            if other._head:
-                other._head.prev = self._tail
-            self._tail = other._tail
-        self._size += other._size
-        other._head = None
-        other._tail = None
-        other._size = 0
+    def __add__(self, other: 'BasicDLLQueue') -> 'BasicDLLQueue':
+        """Creates a new queue by merging two existing queues (O(n))."""
+        new_queue = BasicDLLQueue()
+        current = self._head
+        while current:
+            new_queue.enqueue(current.data)
+            current = current.next
+        current_other = other._head
+        while current_other:
+            new_queue.enqueue(current_other.data)
+            current_other = current_other.next
+        return new_queue
 
-    def removelast(self) -> Any:
-        """Removes and returns the last element."""
-        if self.is_empty():
-            raise IndexError("Remove from empty queue")
-        value = self._tail.data
-        if self._head == self._tail:
-            self._head = self._tail = None
-        else:
-            self._tail = self._tail.prev
-            self._tail.next = None
-        self._size -= 1
-        return value
+    def __iadd__(self, other: 'BasicDLLQueue') -> 'BasicDLLQueue':
+        """Merges another queue into the current queue in place (O(1))."""
+        if other._head:
+            if not self._head:
+                self._head = other._head
+                self._tail = other._tail
+            else:
+                self._tail.next = other._head
+                if other._head:
+                    other._head.prev = self._tail
+                self._tail = other._tail
+            self._size += other._size
+            other._head = None
+            other._tail = None
+            other._size = 0
+        return self
