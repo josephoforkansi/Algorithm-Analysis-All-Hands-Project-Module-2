@@ -191,7 +191,6 @@ def doubling(
                 "peek": [],
                 "concat": [],
                 "iconcat": [],
-                "removelast": [],
             }
 
             for size in sizes:
@@ -232,15 +231,6 @@ def doubling(
                 iconcat_time = time_operation(lambda: queue.__iadd__(other))
                 results["iconcat"].append(iconcat_time)
 
-                # Removelast - test with fixed number of operations (100)
-                try:
-                    removelast_time = time_operation(
-                        lambda: [queue.removelast() for _ in range(100)]
-                    )
-                    results["removelast"].append(removelast_time)
-                except AttributeError:
-                    results["removelast"].append(float('nan')) # If removelast is not implemented
-
             # Store results for plotting
             all_results[approach.value] = results
 
@@ -250,15 +240,14 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
-                width=100  # Increase total table width
+                width=85  # Adjust table width now that 'removelast' is gone
             )
             table.add_column("Size (n)", justify="right", width=12)
-            table.add_column("enqueue (ms)", justify="right", width=15)
-            table.add_column("dequeue (ms)", justify="right", width=15)
-            table.add_column("peek (ms)", justify="right", width=15)
-            table.add_column("concat (ms)", justify="right", width=15)
-            table.add_column("iconcat (ms)", justify="right", width=15)
-            table.add_column("removelast (ms)", justify="right", width=15)
+            table.add_column("enqueue (ms)", justify="right", width=12)
+            table.add_column("dequeue (ms)", justify="right", width=12)
+            table.add_column("peek (ms)", justify="right", width=12)
+            table.add_column("concat (ms)", justify="right", width=12)
+            table.add_column("iconcat (ms)", justify="right", width=12)
 
             for i, size in enumerate(sizes):
                 row = [f"{size:,}"]
@@ -279,13 +268,12 @@ def doubling(
             console.print(traceback.format_exc())
 
     # Generate and save plots
-    plot_results(sizes, all_results, results_dir)
+    plot_results(sizes, all_results, results_dir, operations=["enqueue", "dequeue", "peek", "concat", "iconcat"])
     console.print(f"[green]Plots saved to [bold]{results_dir}[/bold] directory[/green]")
 
 
-def plot_results(sizes, all_results, results_dir):
+def plot_results(sizes, all_results, results_dir, operations):
     """Generate and save plots for doubling experiment results."""
-    operations = ["enqueue", "dequeue", "peek", "concat", "iconcat", "removelast"]
 
     # Create log-log plots for each operation
     for operation in operations:
