@@ -105,6 +105,13 @@ def analyze_queue(queue_class, size=1000):
         iconcat_time = time_operation(lambda: queue.__iadd__(other))
         operations.append(("iconcat", iconcat_time, size // 10))
 
+        # Test removelast
+        removelast_count = size // 4
+        removelast_time = time_operation(
+            lambda: [queue.removelast() for _ in range(removelast_count) if queue.size() > 0]
+        )
+        operations.append(("removelast", removelast_time, removelast_count))
+
         # Display results in table
         table = Table(
             title=f"{approach.value.upper()} Queue Performance Analysis",
@@ -190,6 +197,7 @@ def doubling(
                 "peek": [],
                 "concat": [],
                 "iconcat": [],
+                "removelast": [],
             }
 
             for size in sizes:
@@ -230,6 +238,12 @@ def doubling(
                 iconcat_time = time_operation(lambda: queue.__iadd__(other))
                 results["iconcat"].append(iconcat_time)
 
+                # Removelast
+                removelast_time = time_operation(
+                    lambda: [queue.removelast() for _ in range(size // 4) if queue.size() > 0]
+                )
+                results["removelast"].append(removelast_time)
+
             # Store results for plotting
             all_results[approach.value] = results
 
@@ -239,7 +253,7 @@ def doubling(
                 box=box.ROUNDED,
                 show_header=True,
                 header_style="bold magenta",
-                width=73
+                width=85
             )
             table.add_column("Size (n)", justify="right", width=10)
             table.add_column("enqueue (ms)", justify="right", width=12)
@@ -247,6 +261,7 @@ def doubling(
             table.add_column("peek (ms)", justify="right", width=12)
             table.add_column("concat (ms)", justify="right", width=12)
             table.add_column("iconcat (ms)", justify="right", width=12)
+            table.add_column("removelast (ms)", justify="right", width=14)
 
             for i, size in enumerate(sizes):
                 row = [f"{size:,}"]
@@ -267,7 +282,7 @@ def doubling(
             console.print(traceback.format_exc())
 
     # Generate and save plots
-    plot_results(sizes, all_results, results_dir, operations=["enqueue", "dequeue", "peek", "concat", "iconcat"])
+    plot_results(sizes, all_results, results_dir, operations=["enqueue", "dequeue", "peek", "concat", "iconcat", "removelast"])
     console.print(f"[green]Plots saved to [bold]{results_dir}[/bold] directory[/green]")
 
 
