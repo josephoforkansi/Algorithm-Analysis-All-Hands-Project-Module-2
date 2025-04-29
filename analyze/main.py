@@ -1,4 +1,4 @@
-]""""Main module for queue implementations."""
+""""Main module for queue implementations."""
 
 from typing import Type, Any, Dict, List
 from enum import Enum
@@ -206,5 +206,161 @@ def doubling(
 
                 # Dequeue
                 dequeue_time = time_operation(
-                    lambda:
-    
+                    lambda: [queue.dequeue() for _ in range(size // 2)]
+                )
+                results["dequeue"].append(dequeue_time)
+
+                # Refill queue
+                for i in range(size // 2):
+                    queue.enqueue(i)
+
+                # Peek
+                peek_time = time_operation(
+                    lambda: [queue.peek() for _ in range(size // 3)]
+                )
+                results["peek"].append(peek_time)
+
+                # Prepare other queue for concat
+                for i in range(size // 10):
+                    other.enqueue(i)
+
+                # Concat
+                concat_time = time_operation(lambda: queue + other)
+                results["concat"].append(concat_time)
+
+                # Iconcat
+                iconcat_time = time_operation(lambda: queue.__iadd__(other))
+                results["iconcat"].append(iconcat_time)
+
+                # Removelast - test with fixed number of operations (100)
+                try:
+                    removelast_time = time_operation(
+                        lambda: [queue.removelast() for _ in range(100)]
+                    )
+                    results["removelast"].append(removelast_time)
+                except AttributeError:
+                    results["removelast"].append(float('nan')) # If removelast is not implemented
+
+            # Store results for plotting
+            all_results[approach.value] = results
+
+            # Display results in table
+            table = Table(
+                title=f"{approach.value.upper()} Queue Doubling Experiment Results",
+                box=box.ROUNDED,
+                show_header=True,
+                header_style="bold magenta",
+                width=100  # Increase total table width
+            )
+            table.add_column("Size (n)", justify="right", width=12)
+            table.add_column("enqueue (ms)", justify="right", width=15)
+            table.add_column("dequeue (ms)", justify="right", width=15)
+            table.add_column("peek (ms)", justify="right", width=15)
+            table.add_column("concat (ms)", justify="right", width=15)
+            table.add_column("iconcat (ms)", justify="right", width=15)
+            table.add_column("removelast (ms)", justify="right", width=15)
+
+            for i, size in enumerate(sizes):
+                row = [f"{size:,}"]
+                for operation in results.keys():
+                    value = results[operation][i]
+                    if np.isnan(value):  # Check for NaN
+                        row.append("N/A")
+                    else:
+                        row.append(f"{value * 1000:.5f}")  # Show 5 decimal places
+                table.add_row(*row)
+
+            console.print(Panel(table))
+
+        except Exception as e:
+            console.print(f"[red]Error testing {approach.value}: {str(e)}[/red]")
+            import traceback
+
+            console.print(traceback.format_exc())
+
+    # Generate and save plots
+    plot_results(sizes, all_results, results_dir)
+    console.print(f"[green]Plots saved to [bold]{results_dir}[/bold] directory[/green]")
+
+
+def plot_results(sizes, all_results, results_dir):
+    """Generate and save plots for doubling experiment results."""
+    operations = ["enqueue", "dequeue", "peek", "concat", "iconcat", "removelast"]
+
+    # Create log-log plots for each operation
+    for operation in operations:
+        if len(sizes) > 2:  # Only create log plots if we have enough data points
+            plt.figure(figsize=(10, 6))
+
+            for impl, results in all_results.items():
+                times = np.array(results[operation]) * 1000  # Convert to milliseconds
+                if np.all(times > 0) and not np.all(np.isnan(times)):  # Avoid log(0) and all NaNs
+                    plt.loglog(
+                        sizes, times, marker="o", label=f"{impl.upper()}", linewidth=2
+                    )
+
+            # Add reference lines for O(1), O(n), O(n²) - only if there's valid data
+            valid_data_exists = any(
+                not np.all(np.isnan(results[operation])) for results in all_results.values()
+            )
+            if valid_data_exists and len(sizes) > 1:
+                x_range = np.array(sizes)
+                # Add O(1) reference (using the first valid time point)
+                first_valid_time = next((res[operation][0] * 1000 for res in all_results.values() if not np.isnan(res[operation][0])), None)
+                if first_valid_time is not None:
+                    plt.loglog(x_range, np.ones_like(x_range) * first_valid_time, "--", label="O(1)", alpha=0.5)
+                    # Add O(n) reference - scale to fit
+                    plt.loglog(x_range, x_range * (first_valid_time / x_range[0]), "--", label="O(n)", alpha=0.5)
+                    # Add O(n²) reference - scale to fit
+                    plt.loglog(x_range, np.power(x_range, 2) * (first_valid_time / np.power(x_range[0], 2)), "--", label="O(n²)", alpha=0.5)
+
+
+            plt.title(
+                f"Log-Log Plot for {operation.capitalize()} Operation", fontsize=16
+            )
+            plt.xlabel("Log Queue Size", fontsize=14)
+            plt.ylabel("Log Time (ms)", fontsize=14)
+            plt.grid(True, which="both", linestyle="--", alpha=0.5)
+            plt.legend(fontsize=12)
+            plt.tight_layout()
+
+            # Save log-log plot
+            log_plot_path = results_dir / f"{operation}_loglog_plot.png"
+            plt.savefig(log_plot_path)
+            plt.close()
+
+    # Create regular performance plots for each implementation
+    for impl, results in all_results.items():
+        plt.figure(figsize=(10, 6))
+
+        for operation in operations:
+            times = np.array(results[operation]) * 1000  # Convert to milliseconds
+            plt.plot(sizes, times, marker="o", label=operation, linewidth=2)
+
+        plt.title(f"{impl.upper()} Queue Implementation Performance", fontsize=16)
+        plt.xlabel("Queue Size (n)", fontsize=14)
+        plt.ylabel("Time (ms)", fontsize=14)
+        plt.grid(True, linestyle="--", alpha=0.7)
+        plt.legend(fontsize=12)
+        plt.tight_layout()
+
+        # Save plot
+        plot_path = results_dir / f"{impl}_performance.png"
+        plt.savefig(plot_path)
+        plt.close()
+
+
+# This is the entry point for Poetry
+def main():
+    """Entry point for the application."""
+    try:
+        app()
+    except Exception as e:
+        console.print(f"[red]An unexpected error occurred: {str(e)}[/red]")
+        import traceback
+
+        console.print(traceback.format_exc())
+
+
+if __name__ == "__main__":
+    app()
