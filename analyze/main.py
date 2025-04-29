@@ -1,6 +1,6 @@
 """"Main module for queue implementations."""
 
-from typing import Type, Any, Dict, List
+from typing import Type, Any, Dict, List  # noqa: F401
 from enum import Enum
 import typer
 from rich.console import Console
@@ -8,13 +8,13 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 from time import perf_counter
-import os
+import os  # noqa: F401
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
 from analyze.dll_queque import Queue as DLLQueue
-from analyze.sll_quque import BasicSLLQueue as SLLQueue
+from analyze.sll_queque import BasicSLLQueue as SLLQueue
 from analyze.ArrayQueue import ArrayQueue
 
 
