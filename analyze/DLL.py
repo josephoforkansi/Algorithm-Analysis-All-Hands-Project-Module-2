@@ -1,113 +1,139 @@
-"""Basic Doubly Linked List Queue implementation."""
-
-from typing import Any, Optional
-from dataclasses import dataclass
+""" "A doubly linked list implementation with O(1) concatenation."""
 
 
-@dataclass
-class Node:
-    """Node class for doubly linked list."""
-    value: Any
-    prev: Optional["Node"] = None
-    next: Optional["Node"] = None
+class ListNode:
+    """Represents a node in the doubly linked list."""
+
+    def __init__(self, data, prev=None, link=None):
+        """Initializes a new ListNode."""
+        self.data = data
+        self.prev = prev
+        self.link = link
+        # No automatic linking in the ListNode constructor
 
 
-class Queue:
-    """Basic Doubly Linked List Queue implementation."""
+class DoublyLinkedList:
+    """Represents a doubly linked list with O(1) concatenation."""
 
     def __init__(self):
-        """Initialize an empty queue."""
-        self.head: Optional[Node] = None
-        self.tail: Optional[Node] = None
-        self.size: int = 0
+        """Initializes an empty DoublyLinkedList."""
+        self._head = None
+        self._tail = None
+        self._length = 0
 
-    def enqueue(self, value: Any) -> None:
-        """Add an element to the end of the queue. O(1) operation."""
-        new_node = Node(value)
-        if self.is_empty():
-            self.head = new_node
-            self.tail = new_node
+    def __len__(self):
+        """Returns the length of the list."""
+        return self._length
+
+    def _addbetween(self, item, before, after):
+        """Adds a new node with item between before and after."""
+        new_node = ListNode(item, before, after)
+        if before is None:
+            self._head = new_node
         else:
-            new_node.prev = self.tail
-            self.tail.next = new_node
-            self.tail = new_node
-        self.size += 1
-
-    def dequeue(self) -> Any:
-        """Remove and return the first element from the queue. O(1) operation."""
-        if self.is_empty():
-            raise IndexError("Queue is empty")
-        value = self.head.value
-        self.head = self.head.next
-        if self.head is None:
-            self.tail = None
+            before.link = new_node
+        if after is None:
+            self._tail = new_node
         else:
-            self.head.prev = None
-        self.size -= 1
-        return value
+            after.prev = new_node
+        self._length += 1
 
-    def peek(self) -> Any:
-        """Return the first element without removing it. O(1) operation."""
-        if self.is_empty():
-            raise IndexError("Queue is empty")
-        return self.head.value
+        assert self._length > 0, "List length should be positive after adding"
+        assert self._head is not None or self._length == 0, (
+            "Head should not be None if list is not empty"
+        )
+        assert self._tail is not None or self._length == 0, (
+            "Tail should not be None if list is not empty"
+        )
 
-    def removelast(self) -> Any:
-        """Remove and return the last element from the queue. O(1) operation."""
-        if self.is_empty():
-            raise IndexError("Queue is empty")
-        
-        value = self.tail.value
-        if self.head == self.tail:  # Only one element
-            self.head = None
-            self.tail = None
+    def addfirst(self, item):
+        """Adds a new node with item to the beginning of the list."""
+        self._addbetween(item, None, self._head)
+
+    def addlast(self, item):
+        """Adds a new node with item to the end of the list."""
+        self._addbetween(item, self._tail, None)
+
+    def _remove(self, node):
+        """Removes the given node from the list."""
+        before, after = node.prev, node.link
+        if before is None:
+            self._head = after
+            if self._head is None:
+                self._tail = None
         else:
-            self.tail = self.tail.prev
-            self.tail.next = None
-        
-        self.size -= 1
-        return value
+            before.link = after
+        if after is None:
+            self._tail = before
+            if self._tail is None:
+                self._head = None
+        else:
+            after.prev = before
+        self._length -= 1
+        return node.data
 
-    def is_empty(self) -> bool:
-        """Check if the queue is empty."""
-        return self.size == 0
+    def removefirst(self):
+        """Removes and returns the data from the first node."""
+        if self._head is None:
+            raise IndexError("remove from empty list")
+        return self._remove(self._head)
 
-    def __len__(self) -> int:
-        """Return the number of elements in the queue."""
-        return self.size
+    def removelast(self):
+        """Removes and returns the data from the last node."""
+        if self._tail is None:
+            raise IndexError("remove from empty list")
+        return self._remove(self._tail)
 
-    def __add__(self, other: "Queue") -> "Queue":
-        """Concatenate two queues and return a new queue. O(1) operation."""
-        if self.is_empty():
-            return other
-        if other.is_empty():
-            return self
+    def concatenate(self, other):
+        """Concatenates two DoublyLinkedList in O(1) time (modifies self)."""
+        if not isinstance(other, DoublyLinkedList):
+            raise TypeError(
+                "Can only concatenate DoublyLinkedList with another DoublyLinkedList"
+            )
 
-        # Create a new queue and link nodes
-        result = Queue()
-        result.head = self.head
-        result.tail = other.tail
-        result.size = self.size + other.size
+        if other._head is None:
+            return self  # Nothing to add from the other list
 
-        # Link the queues
-        self.tail.next = other.head
-        other.head.prev = self.tail
+        if self._head is None:
+            self._head = other._head
+            self._tail = other._tail
+            self._length = other._length
+        else:
+            self._tail.link = other._head
+            other._head.prev = self._tail
+            self._tail = other._tail
+            self._length += other._length
 
-        # Ensure original queues remain unchanged
-        other.head = None
-        other.tail = None
-        other.size = 0
+        # Reset the other list
+        other._head = None
+        other._tail = None
+        other._length = 0
 
-        return result
-
-    def __iadd__(self, other: "Queue") -> "Queue":
-        """Concatenate another queue to this queue. O(1) operation."""
-        if self.is_empty():
-            self.head = other.head
-            self.tail = other.tail
-        elif not other.is_empty():
-            self.tail.next = other.head
-            other.head.prev = self.tail
-            self.tail = other.tail
-        self.size += other.size
         return self
+
+    def __add__(self, other):
+        """Concatenates two DoublyLinkedList in O(1) time (modifies self)."""
+        return self.concatenate(other)
+
+    def __iadd__(self, other):
+        """In-place concatenation of two DoublyLinkedList (O(1))."""
+        return self.concatenate(other)
+
+    def clear(self):
+        """Clears the entire list."""
+        self._head = None
+        self._tail = None
+        self._length = 0
+
+    def __str__(self):
+        """Returns a string representation of the list."""
+        elements = []
+        current = self._head
+        while current:
+            elements.append(str(current.data))
+            current = current.link
+        return " <-> ".join(elements)
+
+    def __repr__(self):
+        """Returns a string representation of the list for debugging."""
+        return f"DoublyLinkedList(head={self._head.data if self._head else None}, tail={self._tail.data if self._tail else None}, length={self._length})"
