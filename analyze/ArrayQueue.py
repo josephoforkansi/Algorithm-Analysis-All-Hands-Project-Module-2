@@ -35,13 +35,13 @@ class ArrayQueue:
             raise IndexError("Queue is empty")
         return self.items[self.front]
 
+    def size(self) -> int:
+        """Return the number of elements in the queue."""
+        return self.count
+
     def is_empty(self) -> bool:
         """Check if the queue is empty."""
         return self.count == 0
-
-    def __len__(self) -> int:
-        """Return the number of elements in the queue."""
-        return self.count
 
     def _resize(self, new_capacity: int) -> None:
         """Resize the underlying array."""
@@ -53,10 +53,6 @@ class ArrayQueue:
         self.front = 0
         self.rear = self.count
         self.capacity = new_capacity
-
-    # Note: removelast is not a standard queue operation for ArrayQueue
-    # Implementing it efficiently would be tricky without additional overhead.
-    # It would likely be O(n) as you'd need to shift elements.
 
     def __add__(self, other: "ArrayQueue") -> "ArrayQueue":
         """Concatenate two queues. O(n + m) operation."""
@@ -72,4 +68,3 @@ class ArrayQueue:
         for i in range(other.count):
             self.enqueue(other.items[(other.front + i) % other.capacity])
         return self
-    
