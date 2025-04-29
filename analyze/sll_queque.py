@@ -51,6 +51,27 @@ class BasicSLLQueue:
         """Check if the queue is empty (O(1))."""
         return self._size == 0
 
+    def removelast(self) -> Any:
+        """Remove and return the last element of the queue (O(n))."""
+        if self.is_empty():
+            raise IndexError("removelast from empty queue")
+        if self._head == self._tail:
+            value = self._head.data
+            self._head = None
+            self._tail = None
+            self._size = 0
+            return value
+        current = self._head
+        prev = None
+        while current.next:
+            prev = current
+            current = current.next
+        value = current.data
+        prev.next = None
+        self._tail = prev
+        self._size -= 1
+        return value
+
     def __add__(self, other: "BasicSLLQueue") -> "BasicSLLQueue":
         """Creates a new queue by merging two existing queues (O(n))."""
         new_queue = BasicSLLQueue()
