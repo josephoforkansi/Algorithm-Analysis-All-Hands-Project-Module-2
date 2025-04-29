@@ -6,7 +6,7 @@ class Node:
     """Represents a node in the singly linked list."""
     def __init__(self, data: Any):
         self.data = data
-        self.next: Optional['Node'] = None
+        self.next: Optional[Node] = None
 
 class BasicSLLQueue:
     """A Singly Linked List implementation of a Queue (FIFO)."""
@@ -15,65 +15,67 @@ class BasicSLLQueue:
         self._tail: Optional[Node] = None
         self._size: int = 0
 
-    def enqueue(self, item: Any) -> None:
-        new_node = Node(item)
-        if self._tail:
-            self._tail.next = new_node
-        else:
+    def enqueue(self, value: Any) -> None:
+        """Add an element to the back of the queue (O(1))."""
+        new_node = Node(value)
+        if self._tail is None:
             self._head = new_node
-        self._tail = new_node
+            self._tail = new_node
+        else:
+            self._tail.next = new_node
+            self._tail = new_node
         self._size += 1
 
     def dequeue(self) -> Any:
+        """Remove and return the front element of the queue (O(1))."""
         if self.is_empty():
-            raise IndexError("Dequeue from empty queue")
-        result = self._head.data
+            raise IndexError("dequeue from empty queue")
+        value = self._head.data
         self._head = self._head.next
         if self._head is None:
             self._tail = None
         self._size -= 1
-        return result
+        return value
 
     def peek(self) -> Any:
+        """Return the front element without removing it (O(1))."""
         if self.is_empty():
-            raise IndexError("Peek from empty queue")
+            raise IndexError("peek from empty queue")
         return self._head.data
 
-    def is_empty(self) -> bool:
-        return self._size == 0
-
-    def __len__(self) -> int:
+    def size(self) -> int:
+        """Return the number of elements in the queue (O(1))."""
         return self._size
 
-    def iconcat(self, other: 'BasicSLLQueue') -> None:
-        if other.is_empty():
-            return
-        if self.is_empty():
-            self._head = other._head
-            self._tail = other._tail
-        else:
-            self._tail.next = other._head
-            self._tail = other._tail
-        self._size += other._size
-        other._head = None
-        other._tail = None
-        other._size = 0
+    def is_empty(self) -> bool:
+        """Check if the queue is empty (O(1))."""
+        return self._size == 0
 
-    def removelast(self) -> Any:
-        """Removes and returns the last element."""
-        if self.is_empty():
-            raise IndexError("Remove from empty queue")
-        if self._head == self._tail:
-            # Only one element
-            value = self._head.data
-            self._head = self._tail = None
-            self._size = 0
-            return value
+    def __add__(self, other: "BasicSLLQueue") -> "BasicSLLQueue":
+        """Creates a new queue by merging two existing queues (O(n))."""
+        new_queue = BasicSLLQueue()
         current = self._head
-        while current.next != self._tail:
+        while current:
+            new_queue.enqueue(current.data)
             current = current.next
-        value = self._tail.data
-        current.next = None
-        self._tail = current
-        self._size -= 1
-        return value
+        current = other._head
+        while current:
+            new_queue.enqueue(current.data)
+            current = current.next
+        return new_queue
+
+    def __iadd__(self, other: "BasicSLLQueue") -> "BasicSLLQueue":
+        """Merges another queue into the current queue in place (O(n))."""
+        if other._head:
+            if not self._head:
+                self._head = other._head
+                self._tail = other._tail
+            else:
+                self._tail.next = other._head
+                self._tail = other._tail
+            self._size += other._size
+            # To avoid issues with the 'other' queue being modified externally
+            other._head = None
+            other._tail = None
+            other._size = 0
+        return self
