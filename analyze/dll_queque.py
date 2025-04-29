@@ -84,4 +84,3 @@ class Queue:
             other._tail = None
             other._size = 0
         return self
-  
