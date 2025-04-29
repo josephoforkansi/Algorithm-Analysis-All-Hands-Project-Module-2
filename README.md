@@ -38,7 +38,27 @@ The queue implementations support merging operations:
 
 ✅ Running the Project
 
-To run the program:
+- To run the program:
 
 ```bash
 cd analyze && poetry install
+```
+
+- To run just the basic performance analysis:
+
+```Bash
+poetry run analyze analyze
+```
+
+- To run the doubling experiment:
+
+```Bash
+poetry run analyze doubling
+```
+
+You can also run the commands below for a more detailed approach:
+```Bash
+poetry run analyze --help
+poetry run analyze analyze --help
+poetry run analyze doubling --help
+```
