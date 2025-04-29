@@ -55,6 +55,19 @@ class Queue:
         """Check if the queue is empty (O(1))."""
         return self._size == 0
 
+    def removelast(self) -> Any:
+        """Remove and return the last element of the queue (O(1))."""
+        if self.is_empty():
+            raise IndexError("removelast from empty queue")
+        value = self._tail.data
+        self._tail = self._tail.prev
+        if self._tail:
+            self._tail.next = None
+        else:
+            self._head = None
+        self._size -= 1
+        return value
+
     def __add__(self, other: "Queue") -> "Queue":
         """Creates a new queue by merging two existing queues (O(n))."""
         new_queue = Queue()
