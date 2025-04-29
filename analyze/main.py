@@ -14,7 +14,7 @@ import numpy as np
 from pathlib import Path
 
 from analyze.dll_queque import Queue as DLLQueue
-from analyze.sll_quque import BasicSLLQueue as SLLQueue
+from analyze.sll_queque import BasicSLLQueue as SLLQueue
 from analyze.ArrayQueue import ArrayQueue
 
 
